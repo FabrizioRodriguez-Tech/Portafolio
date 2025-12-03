@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Algebraica Avanzada</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* =========================
+   Tema: Gris oscuro + Dorado
+   Elegante · Minimal · Coherente con el portafolio
+   ========================= */
+
+:root{
+  --bg: #0c0d0e;
+  --panel: #141517;
+  --panel-2: #1a1b1d;
+  --text: #efefef;
+  --muted: #9aa0a6;
+
+  --gold: #c9a86a;
+  --gold-soft: #e6c887;
+
+  --accent-blue: #4aa3e0;
+  --accent-blue-dark: #2b79b6;
+
+  --success: #3fbf84;
+  --error: #df6d6d;
+
+  --border: rgba(255,255,255,0.03);
+  --shadow-deep: 0 20px 50px rgba(2,6,8,0.6);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --transition: 260ms cubic-bezier(.2,.9,.2,1);
+}
+
+/* ------------------
+   Reset y tipografía
+   ------------------ */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system, "Poppins", sans-serif;
+  background: radial-gradient(1000px 400px at 10% 10%, rgba(201,168,106,0.03), transparent 6%),
+              linear-gradient(180deg,#08090a 0%,var(--bg) 100%);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  padding:30px;
+  line-height:1.5;
+  display:flex;
+  justify-content:center;
+}
+
+/* ------------------
+   Card principal
+   ------------------ */
+.container{
+  width:100%;
+  max-width:980px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+  border-radius:var(--radius-lg);
+  padding:32px;
+  box-shadow:var(--shadow-deep);
+  border:1px solid var(--border);
+  position:relative;
+  overflow:hidden;
+}
+
+/* top gold accent */
+.container::before{
+  content:"";
+  position:absolute;
+  top:0; left:0; right:0;
+  height:5px;
+  background: linear-gradient(90deg,var(--gold),var(--gold-soft));
+}
+
+/* ------------------
+   Institutional header
+   ------------------ */
+.institutional-info{
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: calc(var(--radius-lg) - 2px);
+  padding:18px;
+  margin-bottom:18px;
+  border:1px solid rgba(255,255,255,0.02);
+  box-shadow: 0 8px 30px rgba(2,6,8,0.45);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.institution-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding-bottom:8px;
+  border-bottom:1px dashed rgba(255,255,255,0.02);
+}
+.institution-name{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:800;
+  color:var(--gold);
+  letter-spacing:0.3px;
+}
+.institution-name i{
+  color:var(--gold-soft);
+  font-size:1.2rem;
+}
+
+/* course info grid */
+.course-info{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:10px;
+}
+.info-item{ display:flex; flex-direction:column; gap:6px; }
+.info-label{ font-size:0.78rem; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:0.06em; }
+.info-value{
+  font-size:0.95rem;
+  color:var(--text);
+  font-weight:600;
+  padding:8px 10px;
+  background: rgba(255,255,255,0.012);
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.02);
+}
+
+/* ------------------
+   Header principal
+   ------------------ */
+.header{ text-align:center; margin:18px 0; position:relative; }
+.header h1{
+  font-size:1.6rem;
+  font-weight:800;
+  color:var(--gold);
+  letter-spacing:0.2px;
+}
+.subtitle{ font-size:0.95rem; color:var(--muted); margin-top:6px; }
+
+/* ------------------
+   Inputs / campos
+   ------------------ */
+.input-section{ margin-top:8px; }
+
+.field-group{ margin-bottom:18px; position:relative; }
+.field-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:700;
+  color:var(--text);
+}
+label i{ color:var(--gold); }
+
+.field-hint{ color:var(--muted); font-size:0.85rem; }
+
+/* input wrapper */
+.input-wrapper{
+  border-radius:var(--radius-md);
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.02);
+  transition: box-shadow var(--transition), transform var(--transition);
+  overflow:hidden;
+}
+.input-wrapper:focus-within{
+  box-shadow: 0 14px 36px rgba(201,168,106,0.06);
+  transform: translateY(-3px);
+  border-color: rgba(201,168,106,0.12);
+}
+
+/* textarea style */
+textarea{
+  width:100%;
+  min-height:120px;
+  padding:14px;
+  background: transparent;
+  border: none;
+  color:var(--text);
+  font-size:0.95rem;
+  font-family: 'JetBrains Mono', 'Cascadia Code', 'Courier New', monospace;
+  resize:vertical;
+  line-height:1.5;
+  caret-color:var(--gold);
+}
+textarea::placeholder{ color: rgba(255,255,255,0.22); font-style:italic; }
+
+/* input decoration bar */
+.input-decoration{
+  height:3px;
+  width:100%;
+  background: linear-gradient(90deg,var(--gold),var(--gold-soft));
+  transform:scaleX(0);
+  transition: transform var(--transition);
+}
+.input-wrapper:focus-within .input-decoration{ transform:scaleX(1); }
+
+/* ------------------
+   Botón calcular
+   ------------------ */
+.button-container{ margin-top:10px; position:relative; }
+.calculate-button{
+  width:100%;
+  padding:14px 18px;
+  border-radius:12px;
+  border:none;
+  background: linear-gradient(90deg,var(--gold-soft),var(--gold));
+  color:#0b0b0b;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow: 0 14px 36px rgba(201,168,106,0.12);
+  transition: transform var(--transition), box-shadow var(--transition);
+  letter-spacing:0.02em;
+}
+.calculate-button:hover{ transform: translateY(-6px); box-shadow: 0 26px 60px rgba(201,168,106,0.16); }
+.calculate-button:active{ transform: translateY(-2px); }
+.button-glow{
+  position:absolute; inset:0; margin:auto; width:100%; height:100%; border-radius:12px;
+  background: linear-gradient(90deg, rgba(201,168,106,0.06), rgba(230,200,135,0.04));
+  filter:blur(12px); opacity:0; transition:opacity var(--transition);
+}
+.calculate-button:hover ~ .button-glow{ opacity:1; }
+
+/* ------------------
+   Resultados
+   ------------------ */
+.result-section{ margin-top:20px; animation: fadeInUp 420ms ease both; }
+@keyframes fadeInUp { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)} }
+
+.result-header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.result-header h3{ display:flex; align-items:center; gap:8px; color:var(--gold); font-weight:800; margin:0; }
+
+.result-actions{ display:flex; gap:8px; }
+.action-btn{
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.03);
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+  color:var(--muted);
+  cursor:pointer;
+  transition: transform var(--transition), background var(--transition);
+}
+.action-btn:hover{ transform: translateY(-3px); color:var(--text); background: rgba(255,255,255,0.03); }
+
+/* info-card */
+.info-card{
+  padding:18px;
+  border-radius:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.02);
+  box-shadow: 0 12px 34px rgba(2,6,8,0.45);
+  position:relative;
+  overflow:hidden;
+}
+.info-card::before{
+  content:"";
+  position:absolute; left:0; top:0; bottom:0; width:6px;
+  background: linear-gradient(180deg,var(--gold),var(--gold-soft));
+}
+
+/* result content */
+.result-content{
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size:0.98rem;
+  color:var(--text);
+  background: rgba(255,255,255,0.012);
+  padding:14px;
+  border-radius:10px;
+  border-left:4px solid rgba(201,168,106,0.12);
+  min-height:80px;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+/* estados result */
+.result-success{ border-left-color: var(--success); background: linear-gradient(180deg, rgba(63,191,132,0.04), rgba(63,191,132,0.02)); }
+.result-error{ border-left-color: var(--error); background: linear-gradient(180deg, rgba(223,109,109,0.04), rgba(223,109,109,0.02)); animation: shake 0.5s ease; }
+@keyframes shake{ 0%,100%{transform:none} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+.result-warning{ border-left-color: #f1c86b; background: linear-gradient(180deg, rgba(241,200,107,0.04), rgba(241,200,107,0.02)); }
+
+/* loading */
+.loading{ position:relative; color:transparent !important; }
+.loading::after{
+  content:""; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:28px; height:28px; border:3px solid rgba(255,255,255,0.06); border-top:3px solid var(--gold); border-radius:50%; animation:spin 1s linear infinite;
+}
+@keyframes spin{ 0%{transform:translate(-50%,-50%) rotate(0)} 100%{transform:translate(-50%,-50%) rotate(360deg)} }
+
+/* ------------------
+   Responsive
+   ------------------ */
+@media (max-width: 860px){
+  .course-info{ grid-template-columns:1fr 1fr; gap:8px; }
+}
+@media (max-width: 560px){
+  body{ padding:18px; }
+  .container{ padding:20px; }
+  .course-info{ grid-template-columns:1fr; }
+  textarea{ min-height:96px; }
+  .calculate-button{ padding:12px; font-size:0.95rem; }
+  .result-header{ flex-direction:column; align-items:flex-start; gap:8px; }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Información Institucional -->
+        <div class="institutional-info">
+            <div class="institution-header">
+                <div class="institution-name">
+                    <i class="fas fa-graduation-cap"></i>
+                    Tecnológico de Software
+                </div>
+            </div>
+            <div class="course-info">
+                <div class="info-item">
+                    <div class="info-label">Materia</div>
+                    <div class="info-value">Fundamentos de Álgebra</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Docente</div>
+                    <div class="info-value">Jorge Javier Pedrozo</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Alumno</div>
+                    <div class="info-value">Alexander Fabrizio Rodriguez Pérez</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Grupo</div>
+                    <div class="info-value">1°A Desarrollo de Software</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="header">
+            <h1>Calculadora Algebraica</h1>
+            <div class="subtitle">Resuelve ecuaciones y expresiones matemáticas complejas</div>
+        </div>
+
+        <div class="input-section">
+            <div class="field-group">
+                <div class="field-header">
+                    <label for="variables">
+                        <i class="fas fa-code"></i>
+                        Variables y Constantes
+                    </label>
+                    <span class="field-hint">Ctrl+Enter para calcular</span>
+                </div>
+                <div class="input-wrapper">
+                    <textarea id="variables" placeholder="Ejemplo: 
+a = 5
+b = 3.14
+c = a + b
+coeficiente = 2.5"></textarea>
+                    <div class="input-decoration"></div>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <div class="field-header">
+                    <label for="equations">
+                        <i class="fas fa-calculator"></i>
+                        Ecuaciones y Expresiones
+                    </label>
+                    <span class="field-hint">Una por línea</span>
+                </div>
+                <div class="input-wrapper">
+                    <textarea id="equations" placeholder="Ejemplo: 
+resultado = a * b + c
+area = π * radio^2
+ecuacion = (a + b) * coeficiente"></textarea>
+                    <div class="input-decoration"></div>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button id="calculate-btn" class="calculate-button">
+                    <i class="fas fa-bolt"></i>
+                    Calcular Resultados
+                </button>
+                <div class="button-glow"></div>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <div class="result-header">
+                <h3>
+                    <i class="fas fa-chart-line"></i>
+                    Resultados del Cálculo
+                </h3>
+                <div class="result-actions">
+                    <button class="action-btn" onclick="copyResults()">
+                        <i class="fas fa-copy"></i> Copiar
+                    </button>
+                    <button class="action-btn" onclick="clearAll()">
+                        <i class="fas fa-broom"></i> Limpiar
+                    </button>
+                </div>
+            </div>
+            <div class="info-card">
+                <div id="result" class="result-content" role="region" aria-live="polite">
+                    Los resultados aparecerán aquí después del cálculo...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Clase principal de la calculadora - VERSIÓN FUNCIONAL
+        class Calculator {
+            constructor() {
+                this.variablesInput = document.getElementById('variables');
+                this.equationsInput = document.getElementById('equations');
+                this.calculateButton = document.getElementById('calculate-btn');
+                this.resultDiv = document.getElementById('result');
+
+                this.init();
+            }
+
+            // Inicializar eventos
+            init() {
+                this.calculateButton.addEventListener('click', () => this.calculate());
+
+                // También permitir calcular con Ctrl+Enter en los campos
+                this.variablesInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && e.ctrlKey) {
+                        e.preventDefault();
+                        this.calculate();
+                    }
+                });
+
+                this.equationsInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && e.ctrlKey) {
+                        e.preventDefault();
+                        this.calculate();
+                    }
+                });
+            }
+
+            // Parsear las variables del campo de texto
+            parseVariables(variablesText) {
+                const variables = {
+                    'π': Math.PI,
+                    'pi': Math.PI,
+                    'e': Math.E
+                };
+                
+                const lines = variablesText.split('\n').filter(line => line.trim());
+
+                for (const line of lines) {
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine) continue;
+
+                    // Buscar asignaciones como "w1 = 1" o "variable = valor"
+                    const assignmentMatch = trimmedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.+)$/);
+                    if (assignmentMatch) {
+                        const [, varName, value] = assignmentMatch;
+                        try {
+                            // Evaluar el valor de forma segura
+                            variables[varName] = this.evaluateExpression(value.trim(), variables);
+                        } catch (error) {
+                            throw new Error(`Error en variable "${varName}": ${error.message}`);
+                        }
+                    }
+                }
+
+                return variables;
+            }
+
+            // Evaluar expresiones matemáticas de forma SEGURA
+            evaluateExpression(expression, variables) {
+                // Limpiar espacios extra
+                let cleanExpr = expression.replace(/\s+/g, ' ').trim();
+                
+                // Reemplazar constantes matemáticas
+                cleanExpr = cleanExpr.replace(/π/g, 'Math.PI')
+                                    .replace(/pi/g, 'Math.PI')
+                                    .replace(/e/g, 'Math.E');
+
+                // Reemplazar variables conocidas
+                for (const [varName, value] of Object.entries(variables)) {
+                    const regex = new RegExp(`\\b${varName}\\b`, 'g');
+                    cleanExpr = cleanExpr.replace(regex, value);
+                }
+
+                // Convertir ^ a ** para potencias
+                cleanExpr = cleanExpr.replace(/\^/g, '**');
+
+                // Validar que solo contiene caracteres seguros
+                const safePattern = /^[0-9+\-*/().\sMathPIE]*$/;
+                if (!safePattern.test(cleanExpr.replace(/Math\.PI|Math\.E/g, ''))) {
+                    throw new Error('Expresión contiene caracteres no permitidos');
+                }
+
+                try {
+                    // Evaluar usando Function constructor (más seguro que eval)
+                    const result = Function(`"use strict"; return (${cleanExpr})`)();
+                    
+                    // Verificar que el resultado es un número válido
+                    if (typeof result !== 'number' || !isFinite(result)) {
+                        throw new Error('Resultado no es un número válido');
+                    }
+                    
+                    return result;
+                } catch (error) {
+                    throw new Error(`Error al evaluar: ${expression}`);
+                }
+            }
+
+            // Función principal de cálculo
+            calculate() {
+                try {
+                    const variablesText = this.variablesInput.value.trim();
+                    const equationsText = this.equationsInput.value.trim();
+
+                    if (!variablesText && !equationsText) {
+                        this.showResult('⚠️ Por favor ingresa las variables y ecuaciones', 'warning');
+                        return;
+                    }
+
+                    // Mostrar estado de carga
+                    this.showLoading();
+
+                    // Usar setTimeout para permitir que se muestre la animación de carga
+                    setTimeout(() => {
+                        try {
+                            // Parsear variables
+                            const variables = this.parseVariables(variablesText);
+
+                            // Procesar ecuaciones
+                            const equations = equationsText.split('\n').filter(line => line.trim());
+                            const results = [];
+
+                            for (const equation of equations) {
+                                const trimmedEquation = equation.trim();
+                                if (!trimmedEquation) continue;
+
+                                // Buscar ecuaciones como "result = expression"
+                                const equationMatch = trimmedEquation.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.+)$/);
+                                if (equationMatch) {
+                                    const [, resultVar, expression] = equationMatch;
+
+                                    try {
+                                        const result = this.evaluateExpression(expression, variables);
+                                        variables[resultVar] = result;
+                                        results.push(`🔹 ${resultVar} = ${this.formatResult(result)}`);
+                                    } catch (error) {
+                                        throw new Error(`Error en ecuación "${trimmedEquation}": ${error.message}`);
+                                    }
+                                } else {
+                                    // Si no es una asignación, evaluar como expresión directa
+                                    try {
+                                        const result = this.evaluateExpression(trimmedEquation, variables);
+                                        results.push(`🔸 ${trimmedEquation} = ${this.formatResult(result)}`);
+                                    } catch (error) {
+                                        throw new Error(`Error al evaluar "${trimmedEquation}": ${error.message}`);
+                                    }
+                                }
+                            }
+
+                            if (results.length === 0) {
+                                this.showResult('📝 No se encontraron ecuaciones válidas para calcular', 'warning');
+                            } else {
+                                this.showResult(results.join('\n'), 'success');
+                            }
+
+                        } catch (error) {
+                            this.showResult(`❌ ${error.message}`, 'error');
+                        }
+                    }, 500);
+
+                } catch (error) {
+                    this.showResult(`❌ ${error.message}`, 'error');
+                }
+            }
+
+            // Formatear resultados numéricos
+            formatResult(value) {
+                if (typeof value !== 'number') return String(value);
+                
+                // Redondear a 6 decimales para evitar notación científica en números pequeños
+                if (Math.abs(value) < 1e-6 && value !== 0) {
+                    return value.toExponential(6);
+                }
+                
+                // Formatear números con máximo 6 decimales
+                const rounded = Math.round(value * 1e6) / 1e6;
+                return rounded.toString();
+            }
+
+            // Mostrar estado de carga
+            showLoading() {
+                this.resultDiv.textContent = 'Calculando...';
+                this.resultDiv.classList.add('loading');
+                this.calculateButton.disabled = true;
+                this.calculateButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculando...';
+            }
+
+            // Mostrar resultados en la interfaz
+            showResult(message, type = 'success') {
+                // Remover estado de carga
+                this.resultDiv.classList.remove('loading');
+                this.calculateButton.disabled = false;
+                this.calculateButton.innerHTML = '<i class="fas fa-bolt"></i> Calcular Resultados';
+
+                this.resultDiv.textContent = message;
+
+                // Remover clases anteriores
+                this.resultDiv.classList.remove('result-success', 'result-error', 'result-warning');
+
+                // Agregar clase según el tipo
+                if (type === 'success') {
+                    this.resultDiv.classList.add('result-success');
+                } else {
+                    this.resultDiv.classList.add(`result-${type}`);
+                }
+            }
+        }
+
+        // Funciones auxiliares globales
+        function copyResults() {
+            const resultDiv = document.getElementById('result');
+            const text = resultDiv.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = resultDiv.textContent;
+                resultDiv.textContent = '✓ Resultados copiados al portapapeles';
+                setTimeout(() => {
+                    resultDiv.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        function clearAll() {
+            document.getElementById('variables').value = '';
+            document.getElementById('equations').value = '';
+            document.getElementById('result').textContent = 'Los resultados aparecerán aquí después del cálculo...';
+            document.getElementById('result').className = 'result-content';
+        }
+
+        // Inicializar la calculadora cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            new Calculator();
+        });
+    </script>
+</body>
+</html>
