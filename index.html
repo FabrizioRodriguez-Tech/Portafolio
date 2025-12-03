@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Portafolio — Actividades</title>
+
+  <!-- CSS compartido -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- JS global -->
+  <script defer src="js/script_global.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header container" role="banner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">PR</div>
+        <div>
+          <h1>Portafolio</h1>
+          <p class="subtitle">Actividades — Matemáticas interactivas</p>
+        </div>
+      </div>
+
+      <!-- Toolbar (se puede generar via JS también; incluida en HTML por accesibilidad) -->
+      <div class="index-toolbar" role="search" aria-label="Buscar actividades">
+        <input id="buscar" class="input" type="search" placeholder="Buscar actividad..." aria-label="Buscar actividad">
+        <select id="orden" class="input" aria-label="Ordenar actividades">
+          <option value="def">Orden predeterminado</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+        </select>
+        <button id="reset" class="btn ghost" aria-label="Restablecer">Reset</button>
+      </div>
+    </header>
+
+    <main class="container" role="main">
+      <section class="grid" aria-live="polite">
+        <a class="card" href="actividades/actividad02/1A_Actividad2_Fabrizio_Rodriguez.html">Actividad 02 — Números Complejos</a>
+        <a class="card" href="actividades/actividad04/1A-Actividad4_Fabrizio_Rodriguez.html">Actividad 04 — Polar → Exponencial</a>
+        <a class="card" href="actividades/actividad06/1A_A06_Fabrizio Rodriguez.html">Actividad 06 — Expresiones Algebraicas</a>
+        <a class="card" href="actividades/actividad08/1A_A08_Fabrizio Rodriguez.html">Actividad 08 — Calculadora Operaciones</a>
+        <a class="card" href="actividades/actividad10/1°A_Alexander_Rodriguez.html.html">Actividad 10 — Productos Notables</a>
+        <a class="card" href="actividades/actividad12/1°A_Act12_Alexander Rodriguez.html">Actividad 12 — Factorización</a>
+        <a class="card" href="actividades/actividad14/1°A_Alexander_Rodriguez.html">Actividad 14 — Ecuaciones 1er Grado</a>
+      </section>
+    </main>
+
+    <footer class="site-footer container" role="contentinfo">
+      <small>&copy; Tu Nombre — Portafolio</small>
+    </footer>
+  </div>
+</body>
+</html>

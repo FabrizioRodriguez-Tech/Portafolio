@@ -1,0 +1,129 @@
+/* ===========================
+   PALETA ELEGANTE
+   =========================== */
+:root {
+  --gris-fondo: #121212;
+  --gris-card: #1E1E1E;
+  --gris-borde: #2A2A2A;
+
+  --dorado: #C9A86A;
+  --dorado-brillo: #e6c887;
+
+  --texto: #FFFFFF;
+  --texto-secundario: #CCCCCC;
+
+  --radio: 14px;
+  --trans: 0.25s ease;
+}
+
+/* ===========================
+   RESETEO
+   =========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: var(--gris-fondo);
+  color: var(--texto);
+  padding: 40px 20px;
+}
+
+/* ===========================
+   HEADER
+   =========================== */
+.site-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.site-header h1 {
+  font-size: 2.7rem;
+  color: var(--dorado);
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(201,168,106,0.3);
+}
+
+.subtitle {
+  color: var(--texto-secundario);
+  margin-top: 5px;
+  font-size: 1.1rem;
+}
+
+/* ===========================
+   GRID DE ACTIVIDADES
+   =========================== */
+.grid {
+  display: grid;
+  gap: 25px;
+  max-width: 900px;
+  margin: auto;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+/* ===========================
+   TARJETAS
+   =========================== */
+.card {
+  display: block;
+  background: var(--gris-card);
+  border: 2px solid var(--gris-borde);
+  padding: 22px;
+  border-radius: var(--radio);
+  text-decoration: none;
+  color: var(--texto);
+  font-size: 1.05rem;
+  font-weight: 500;
+
+  transition: var(--trans);
+  position: relative;
+  overflow: hidden;
+}
+
+/* BORDE DORADO ANIMADO */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radio);
+  padding: 2px;
+  background: linear-gradient(135deg, #d1b47a, #b89054, #d1b47a);
+  --m: 4px;   
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  opacity: 0;
+  transition: var(--trans);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* EFECTO HOVER */
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 18px rgba(201, 168, 106, 0.25);
+  color: var(--dorado);
+}
+
+/* ===========================
+   FOOTER
+   =========================== */
+.site-footer {
+  text-align: center;
+  margin-top: 40px;
+  color: var(--texto-secundario);
+}
+
+.site-footer small {
+  border-top: 1px solid var(--gris-borde);
+  padding-top: 14px;
+  display: inline-block;
+}
