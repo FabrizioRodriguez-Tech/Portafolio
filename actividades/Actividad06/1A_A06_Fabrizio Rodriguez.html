@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Expresiones Algebraicas</title>
+    <style>
+    /* ===========================
+   THEME — Gris oscuro + Dorado
+   Elegante · Premium · Minimalista
+   =========================== */
+:root{
+    --bg: #0e0f11;
+    --panel: #161719;
+    --panel-light: #1d1e20;
+    --text: #e8e8e8;
+    --muted: #9b9ea1;
+
+    --gold: #c9a86a;
+    --gold-soft: #e6c887;
+
+    --border: rgba(255,255,255,0.06);
+    --shadow: 0 18px 48px rgba(0,0,0,0.55);
+    --radius: 14px;
+    --transition: 260ms cubic-bezier(.2,.9,.2,1);
+}
+
+/* ===========================
+   RESET
+   =========================== */
+*{
+    margin:0; padding:0;
+    box-sizing:border-box;
+}
+body{
+    background: linear-gradient(180deg,#0b0c0d,#0e0f11 50%) fixed;
+    color:var(--text);
+    font-family: "Inter","Segoe UI",sans-serif;
+    padding:26px;
+}
+
+/* ===========================
+   TITULOS Y HEADER
+   =========================== */
+header{
+    text-align:center;
+    margin-bottom:30px;
+}
+header h1{
+    font-size:1.6rem;
+    color:var(--gold);
+    text-shadow:0 10px 30px rgba(201,168,106,0.16);
+}
+header .subtitle{
+    margin-top:8px;
+    color:var(--muted);
+    font-size:0.95rem;
+}
+
+/* ===========================
+   TARJETA PRINCIPAL
+   =========================== */
+.container{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:32px;
+    max-width:1100px;
+    margin:auto;
+    box-shadow:var(--shadow);
+    position:relative;
+}
+
+/* Golden top bar */
+.container::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:5px;
+    background:linear-gradient(90deg,var(--gold),var(--gold-soft));
+}
+
+/* ===========================
+   GRID DE CONVERSORES
+   =========================== */
+.converter-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:28px;
+}
+
+/* columnas */
+.column{
+    background: var(--panel-light);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    transition:var(--transition);
+}
+.column:hover{
+    transform:translateY(-6px);
+}
+
+/* Títulos de sección */
+.column h2{
+    margin-bottom:18px;
+    font-size:1.05rem;
+    color:var(--gold-soft);
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+/* ===========================
+   INPUTS
+   =========================== */
+textarea{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    background:#1c1d1f;
+    border:1px solid var(--border);
+    color:var(--text);
+    resize:none;
+    font-size:0.96rem;
+    font-family:"Inter",sans-serif;
+    transition:var(--transition);
+}
+textarea:focus{
+    outline:none;
+    border-color:var(--gold);
+    box-shadow:0 10px 26px rgba(201,168,106,0.1);
+}
+
+/* ===========================
+   BOTONES
+   =========================== */
+.convert-button{
+    width:100%;
+    margin-top:12px;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(90deg,var(--gold),var(--gold-soft));
+    color:#0a0a0a;
+    font-weight:800;
+    cursor:pointer;
+    transition:var(--transition);
+    box-shadow:0 14px 36px rgba(201,168,106,0.12);
+}
+.convert-button:hover{
+    transform:translateY(-4px);
+}
+.convert-button:active{
+    transform:translateY(-1px);
+}
+
+/* ===========================
+   RESULTADOS
+   =========================== */
+.result-section{
+    margin-top:18px;
+    padding:18px;
+    border-left:4px solid var(--gold);
+    background:rgba(255,255,255,0.03);
+    border-radius:10px;
+}
+.result-output{
+    margin-top:10px;
+    font-family: "Courier New", monospace;
+    font-size:1.02rem;
+}
+
+/* ===========================
+   BOTONES DE EVALUACIÓN
+   =========================== */
+.evaluation-buttons{
+    display:flex;
+    gap:12px;
+    margin-top:14px;
+}
+.evaluation-buttons button{
+    padding:10px 14px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#0a0a0a;
+    font-weight:700;
+    transition:var(--transition);
+}
+.satisfactory-btn{
+    background:#6fd66f;
+}
+.improve-btn{
+    background:#d66f6f;
+}
+.add-pattern-btn{
+    background:#6fb4d6;
+}
+
+/* ===========================
+   ALERTAS
+   =========================== */
+.alert{
+    position:relative;
+    margin-bottom:18px;
+    padding:14px;
+    border-radius:10px;
+    font-weight:700;
+    text-align:center;
+    display:none;
+}
+.alert-success{
+    background:#1c3120;
+    color:#6ddf82;
+    border:1px solid #357d45;
+}
+.alert-error{
+    background:#311c1c;
+    color:#df6d6d;
+    border:1px solid #7d3535;
+}
+.alert-warning{
+    background:#312c1c;
+    color:#dfc26d;
+    border:1px solid #7d6d35;
+}
+
+/* ===========================
+   PANEL DE BASE DE DATOS (JSON)
+   =========================== */
+.json-loader-section{
+    margin-top:40px;
+}
+.json-loader-section h2{
+    color:var(--gold);
+    margin-bottom:10px;
+}
+.json-loader{
+    background:var(--panel-light);
+    padding:18px;
+    border-radius:var(--radius);
+    border:1px solid var(--border);
+}
+.file-input-label{
+    display:inline-block;
+    padding:10px 14px;
+    background:rgba(255,255,255,0.05);
+    border-radius:10px;
+    cursor:pointer;
+    border:1px solid var(--border);
+    transition:var(--transition);
+}
+.file-input-label:hover{
+    background:rgba(255,255,255,0.1);
+}
+.file-name{
+    margin-left:12px;
+    color:var(--muted);
+}
+.load-button, .reset-button{
+    margin-top:12px;
+    padding:10px 14px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+    color:#0a0a0a;
+}
+.load-button{
+    background:var(--gold);
+}
+.reset-button{
+    background:#999;
+}
+
+/* ===========================
+   INFO CARDS
+   =========================== */
+.info-section{
+    margin-top:40px;
+}
+.info-section h2{
+    color:var(--gold);
+    margin-bottom:10px;
+}
+.info-cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+}
+.info-card{
+    background:var(--panel-light);
+    padding:18px;
+    border-radius:var(--radius);
+    border:1px solid var(--border);
+}
+.metric-number{
+    font-size:1.4rem;
+    color:var(--gold-soft);
+}
+
+/* ===========================
+   HISTORIAL
+   =========================== */
+.history-section h2{
+    color:var(--gold);
+    margin-top:40px;
+}
+.history-item{
+    padding:14px;
+    margin-top:8px;
+    background:rgba(255,255,255,0.03);
+    border-left:4px solid var(--gold);
+    border-radius:10px;
+}
+
+/* ===========================
+   FOOTER
+   =========================== */
+footer{
+    text-align:center;
+    margin-top:40px;
+    color:var(--muted);
+}
+
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Información institucional -->
+    <div class="institutional-info">
+        <div class="institutional-grid">
+            <div class="institutional-item">
+                <span class="institutional-label">Institución</span>
+                <span class="institutional-value">Tecnológico de Software</span>
+            </div>
+            <div class="institutional-item">
+                <span class="institutional-label">Materia</span>
+                <span class="institutional-value">Fundamentos de Álgebra</span>
+            </div>
+            <div class="institutional-item">
+                <span class="institutional-label">Docente</span>
+                <span class="institutional-value">Jorger Javier Pedrozo</span>
+            </div>
+            <div class="institutional-item">
+                <span class="institutional-label">Alumno</span>
+                <span class="institutional-value">Alexander Fabrizio Rodriguez Pérez</span>
+            </div>
+            <div class="institutional-item">
+                <span class="institutional-label">Grupo</span>
+                <span class="institutional-value">1°A</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Encabezado principal -->
+    <header>
+        <h1><i class="fas fa-calculator"></i> Calculadora de Expresiones</h1>
+        <p class="subtitle">Convierte entre lenguaje natural y expresiones algebraicas de forma intuitiva</p>
+    </header>
+
+    <!-- Contenedor principal de 2 columnas -->
+    <main class="container">
+        <!-- Alertas -->
+        <div id="alert-box" class="alert" style="display: none;"></div>
+
+        <div class="converter-grid">
+            <!-- Columna izquierda: Lenguaje Natural -->
+            <div class="column natural-column">
+                <h2><i class="fas fa-language"></i> Lenguaje Natural</h2>
+                <div class="input-group">
+                    <label for="natural-input">Escribe en palabras tu expresión matemática</label>
+                    <textarea 
+                        id="natural-input" 
+                        placeholder="Ejemplo: La suma de a y b, El producto de x al cuadrado por y"
+                        rows="5"
+                    ></textarea>
+                </div>
+                <button id="convert-to-algebraic-btn" class="convert-button">
+                    <i class="fas fa-arrow-right"></i> Convertir a Expresión Algebraica
+                </button>
+                
+                <div id="natural-result" class="result-section" style="display: none;">
+                    <div class="result-content">
+                        <h4><i class="fas fa-check-circle"></i> Resultado:</h4>
+                        <div id="natural-output" class="result-output"></div>
+                    </div>
+                    <div class="evaluation-buttons">
+                        <button id="natural-satisfactory-btn" class="satisfactory-btn">
+                            <i class="fas fa-thumbs-up"></i> Satisfactorio
+                        </button>
+                        <button id="natural-improve-btn" class="improve-btn">
+                            <i class="fas fa-thumbs-down"></i> Mejorar
+                        </button>
+                        <button id="natural-add-pattern-btn" class="add-pattern-btn">
+                            <i class="fas fa-plus-circle"></i> Agregar Patrón
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna derecha: Expresión Algebraica -->
+            <div class="column algebraic-column">
+                <h2><i class="fas fa-square-root-alt"></i> Expresión Algebraica</h2>
+                <div class="input-group">
+                    <label for="algebraic-input">Escribe tu expresión matemática</label>
+                    <textarea 
+                        id="algebraic-input" 
+                        placeholder="Ejemplo: a + b, x² * y, (a+b)^2"
+                        rows="5"
+                    ></textarea>
+                </div>
+                <button id="convert-to-natural-btn" class="convert-button">
+                    <i class="fas fa-arrow-left"></i> Convertir a Lenguaje Natural
+                </button>
+                
+                <div id="algebraic-result" class="result-section" style="display: none;">
+                    <div class="result-content">
+                        <h4><i class="fas fa-check-circle"></i> Resultado:</h4>
+                        <div id="algebraic-output" class="result-output"></div>
+                    </div>
+                    <div class="evaluation-buttons">
+                        <button id="algebraic-satisfactory-btn" class="satisfactory-btn">
+                            <i class="fas fa-thumbs-up"></i> Satisfactorio
+                        </button>
+                        <button id="algebraic-improve-btn" class="improve-btn">
+                            <i class="fas fa-thumbs-down"></i> Mejorar
+                        </button>
+                        <button id="algebraic-add-pattern-btn" class="add-pattern-btn">
+                            <i class="fas fa-plus-circle"></i> Agregar Patrón
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de carga de JSON -->
+        <section class="json-loader-section">
+            <h2><i class="fas fa-database"></i> Base de Datos de Patrones</h2>
+            <div class="json-loader">
+                <div class="file-input-wrapper">
+                    <input type="file" id="json-file-input" accept=".json" />
+                    <label for="json-file-input" class="file-input-label">
+                        <i class="fas fa-file-upload"></i> Cargar archivo JSON
+                    </label>
+                    <span id="file-name" class="file-name">Ningún archivo seleccionado</span>
+                </div>
+                <button id="load-json-btn" class="load-button" disabled>
+                    <i class="fas fa-download"></i> Cargar Patrones
+                </button>
+                <button id="reset-json-btn" class="reset-button">
+                    <i class="fas fa-undo"></i> Patrones por Defecto
+                </button>
+            </div>
+        </section>
+
+        <!-- Tarjeta de información y métricas -->
+        <section class="info-section">
+            <h2><i class="fas fa-chart-bar"></i> Información del Sistema</h2>
+            <div class="info-cards">
+                <div class="info-card">
+                    <h3>Patrones Cargados</h3>
+                    <div class="metric">
+                        <span class="metric-number" id="total-patterns">0</span>
+                        <span class="metric-label">expresiones disponibles</span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>Archivo JSON</h3>
+                    <div class="metric">
+                        <span class="metric-number" id="file-size">0 KB</span>
+                        <span class="metric-label">tamaño del archivo</span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>Conversiones</h3>
+                    <div class="metric">
+                        <span class="metric-number" id="conversions-count">0</span>
+                        <span class="metric-label">conversiones realizadas</span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>Tasa de Satisfacción</h3>
+                    <div class="metric">
+                        <span class="metric-number" id="satisfaction-rate">0%</span>
+                        <span class="metric-label">conversiones satisfactorias</span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>Última Actualización</h3>
+                    <div class="metric">
+                        <span class="metric-number" id="last-update">--</span>
+                        <span class="metric-label">patrones modificados</span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>Complejidad Promedio</h3>
+                    <div class="metric">
+                        <span class="metric-number" id="avg-complexity">0</span>
+                        <span class="metric-label">nivel de dificultad</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Historial -->
+        <section class="history-section">
+            <h2><i class="fas fa-history"></i> Historial de Conversiones</h2>
+            <div class="history-controls">
+                <button id="clear-history-btn" class="clear-button">
+                    <i class="fas fa-trash"></i> Limpiar Historial
+                </button>
+                <button id="export-history-btn" class="export-button">
+                    <i class="fas fa-file-export"></i> Exportar Historial
+                </button>
+            </div>
+            <div id="history-list" class="history-list">
+                <p class="no-history">No hay conversiones registradas aún</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Pie de página -->
+    <footer>
+        <p><i class="fas fa-copyright"></i> 2025 Calculadora de Expresiones Algebraicas</p>
+        <p>Proyecto Educativo - Desarrollado para fines académicos</p>
+    </footer>
+
+    <script>
+    // Patrones por defecto mejorados
+    const defaultPatterns = {
+        patterns: [
+            {
+                natural: "la suma de {a} y {b}",
+                algebraic: "{a} + {b}",
+                complexity: 1,
+                category: "operaciones-basicas"
+            },
+            {
+                natural: "la resta de {a} y {b}",
+                algebraic: "{a} - {b}",
+                complexity: 1,
+                category: "operaciones-basicas"
+            },
+            {
+                natural: "el producto de {a} y {b}",
+                algebraic: "{a} * {b}",
+                complexity: 1,
+                category: "operaciones-basicas"
+            },
+            {
+                natural: "la división de {a} entre {b}",
+                algebraic: "{a} / {b}",
+                complexity: 1,
+                category: "operaciones-basicas"
+            },
+            {
+                natural: "{a} elevado a la {n}",
+                algebraic: "{a}^{n}",
+                complexity: 2,
+                category: "potencias"
+            },
+            {
+                natural: "el cuadrado de {a}",
+                algebraic: "{a}^2",
+                complexity: 2,
+                category: "potencias"
+            },
+            {
+                natural: "el cubo de {a}",
+                algebraic: "{a}^3",
+                complexity: 2,
+                category: "potencias"
+            },
+            {
+                natural: "la raíz cuadrada de {a}",
+                algebraic: "sqrt({a})",
+                complexity: 2,
+                category: "radicales"
+            },
+            {
+                natural: "el doble de {a}",
+                algebraic: "2 * {a}",
+                complexity: 1,
+                category: "multiplicaciones"
+            },
+            {
+                natural: "la mitad de {a}",
+                algebraic: "{a} / 2",
+                complexity: 1,
+                category: "divisiones"
+            },
+            {
+                natural: "la suma del cuadrado de {a} y el cuadrado de {b}",
+                algebraic: "{a}^2 + {b}^2",
+                complexity: 2,
+                category: "expresiones-compuestas"
+            },
+            {
+                natural: "el producto de {a} más {b} por {a} menos {b}",
+                algebraic: "({a} + {b}) * ({a} - {b})",
+                complexity: 2,
+                category: "expresiones-compuestas"
+            }
+        ],
+        metadata: {
+            version: "2.0",
+            lastUpdated: new Date().toISOString(),
+            totalPatterns: 12
+        }
+    };
+
+    // Estado de la aplicación
+    let patternsData = JSON.parse(JSON.stringify(defaultPatterns));
+    let conversionHistory = [];
+    let satisfactoryConversions = 0;
+    let totalConversions = 0;
+    let currentConversion = null;
+
+    // Elementos DOM
+    const naturalInput = document.getElementById('natural-input');
+    const algebraicInput = document.getElementById('algebraic-input');
+    const convertToAlgebraicBtn = document.getElementById('convert-to-algebraic-btn');
+    const convertToNaturalBtn = document.getElementById('convert-to-natural-btn');
+    const naturalOutput = document.getElementById('natural-output');
+    const algebraicOutput = document.getElementById('algebraic-output');
+    const naturalResult = document.getElementById('natural-result');
+    const algebraicResult = document.getElementById('algebraic-result');
+    const jsonFileInput = document.getElementById('json-file-input');
+    const fileName = document.getElementById('file-name');
+    const loadJsonBtn = document.getElementById('load-json-btn');
+    const resetJsonBtn = document.getElementById('reset-json-btn');
+    const totalPatterns = document.getElementById('total-patterns');
+    const fileSize = document.getElementById('file-size');
+    const conversionsCount = document.getElementById('conversions-count');
+    const satisfactionRate = document.getElementById('satisfaction-rate');
+    const lastUpdate = document.getElementById('last-update');
+    const avgComplexity = document.getElementById('avg-complexity');
+    const clearHistoryBtn = document.getElementById('clear-history-btn');
+    const exportHistoryBtn = document.getElementById('export-history-btn');
+    const historyList = document.getElementById('history-list');
+    const alertBox = document.getElementById('alert-box');
+    const naturalSatisfactoryBtn = document.getElementById('natural-satisfactory-btn');
+    const naturalImproveBtn = document.getElementById('natural-improve-btn');
+    const naturalAddPatternBtn = document.getElementById('natural-add-pattern-btn');
+    const algebraicSatisfactoryBtn = document.getElementById('algebraic-satisfactory-btn');
+    const algebraicImproveBtn = document.getElementById('algebraic-improve-btn');
+    const algebraicAddPatternBtn = document.getElementById('algebraic-add-pattern-btn');
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+        initApp();
+        setupEventListeners();
+        updateMetrics();
+    });
+
+    function initApp() {
+        // Cargar datos desde localStorage si existen
+        const savedPatterns = localStorage.getItem('expressionPatterns');
+        const savedHistory = localStorage.getItem('conversionHistory');
+        const savedMetrics = localStorage.getItem('conversionMetrics');
+
+        if (savedPatterns) {
+            try {
+                patternsData = JSON.parse(savedPatterns);
+            } catch (e) {
+                console.error("Error al cargar patrones guardados:", e);
+                patternsData = JSON.parse(JSON.stringify(defaultPatterns));
+            }
+        }
+
+        if (savedHistory) {
+            try {
+                conversionHistory = JSON.parse(savedHistory);
+            } catch (e) {
+                console.error("Error al cargar historial:", e);
+                conversionHistory = [];
+            }
+        }
+
+        if (savedMetrics) {
+            try {
+                const metrics = JSON.parse(savedMetrics);
+                satisfactoryConversions = metrics.satisfactory || 0;
+                totalConversions = metrics.total || 0;
+            } catch (e) {
+                console.error("Error al cargar métricas:", e);
+                satisfactoryConversions = 0;
+                totalConversions = 0;
+            }
+        }
+
+        updateHistoryDisplay();
+    }
+
+    function setupEventListeners() {
+        // Conversión de lenguaje natural a algebraico
+        convertToAlgebraicBtn.addEventListener('click', function() {
+            const text = naturalInput.value.trim();
+            if (!text) {
+                showAlert('Por favor, ingresa una expresión en lenguaje natural', 'error');
+                return;
+            }
+
+            // Mostrar estado de carga
+            convertToAlgebraicBtn.classList.add('loading');
+            convertToAlgebraicBtn.disabled = true;
+
+            // Simular procesamiento (en un caso real sería instantáneo)
+            setTimeout(() => {
+                const result = convertNaturalToAlgebraic(text);
+                if (result) {
+                    algebraicOutput.textContent = result.expression;
+                    algebraicResult.style.display = 'block';
+                    currentConversion = {
+                        type: 'natural-to-algebraic',
+                        input: text,
+                        output: result.expression,
+                        patternUsed: result.patternUsed,
+                        timestamp: new Date().toISOString()
+                    };
+                    addToHistory(currentConversion);
+                    updateMetrics();
+                    showAlert('Conversión realizada correctamente', 'success');
+                } else {
+                    showAlert('No se pudo convertir la expresión. Intenta con otra formulación.', 'warning');
+                }
+                
+                convertToAlgebraicBtn.classList.remove('loading');
+                convertToAlgebraicBtn.disabled = false;
+            }, 500);
+        });
+
+        // Conversión de algebraico a lenguaje natural
+        convertToNaturalBtn.addEventListener('click', function() {
+            const expression = algebraicInput.value.trim();
+            if (!expression) {
+                showAlert('Por favor, ingresa una expresión algebraica', 'error');
+                return;
+            }
+
+            // Mostrar estado de carga
+            convertToNaturalBtn.classList.add('loading');
+            convertToNaturalBtn.disabled = true;
+
+            setTimeout(() => {
+                const result = convertAlgebraicToNatural(expression);
+                if (result) {
+                    naturalOutput.textContent = result.expression;
+                    naturalResult.style.display = 'block';
+                    currentConversion = {
+                        type: 'algebraic-to-natural',
+                        input: expression,
+                        output: result.expression,
+                        patternUsed: result.patternUsed,
+                        timestamp: new Date().toISOString()
+                    };
+                    addToHistory(currentConversion);
+                    updateMetrics();
+                    showAlert('Conversión realizada correctamente', 'success');
+                } else {
+                    showAlert('No se pudo convertir la expresión. Intenta con otra formulación.', 'warning');
+                }
+                
+                convertToNaturalBtn.classList.remove('loading');
+                convertToNaturalBtn.disabled = false;
+            }, 500);
+        });
+
+        // Manejo de archivos JSON
+        jsonFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                fileName.textContent = file.name;
+                loadJsonBtn.disabled = false;
+
+                // Mostrar tamaño del archivo
+                const sizeKB = (file.size / 1024).toFixed(2);
+                fileSize.textContent = `${sizeKB} KB`;
+            } else {
+                fileName.textContent = 'Ningún archivo seleccionado';
+                loadJsonBtn.disabled = true;
+            }
+        });
+
+        loadJsonBtn.addEventListener('click', function() {
+            const file = jsonFileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const jsonData = JSON.parse(e.target.result);
+                        if (jsonData.patterns && Array.isArray(jsonData.patterns)) {
+                            patternsData = jsonData;
+                            patternsData.metadata = {
+                                ...patternsData.metadata,
+                                lastUpdated: new Date().toISOString(),
+                                totalPatterns: jsonData.patterns.length
+                            };
+                            localStorage.setItem('expressionPatterns', JSON.stringify(patternsData));
+                            updateMetrics();
+                            showAlert('Patrones cargados correctamente', 'success');
+                        } else {
+                            throw new Error('Formato de archivo inválido');
+                        }
+                    } catch (error) {
+                        showAlert('Error al procesar el archivo JSON: ' + error.message, 'error');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        resetJsonBtn.addEventListener('click', function() {
+            patternsData = JSON.parse(JSON.stringify(defaultPatterns));
+            localStorage.setItem('expressionPatterns', JSON.stringify(patternsData));
+            jsonFileInput.value = '';
+            fileName.textContent = 'Ningún archivo seleccionado';
+            loadJsonBtn.disabled = true;
+            updateMetrics();
+            showAlert('Patrones restablecidos a valores por defecto', 'success');
+        });
+
+        // Botones de evaluación
+        naturalSatisfactoryBtn.addEventListener('click', function() {
+            if (currentConversion && currentConversion.type === 'algebraic-to-natural') {
+                satisfactoryConversions++;
+                totalConversions++;
+                saveMetrics();
+                updateMetrics();
+                showAlert('¡Gracias por tu feedback! La conversión fue marcada como satisfactoria.', 'success');
+            }
+        });
+
+        naturalImproveBtn.addEventListener('click', function() {
+            if (currentConversion && currentConversion.type === 'algebraic-to-natural') {
+                totalConversions++;
+                saveMetrics();
+                updateMetrics();
+                showAlert('Trabajaremos para mejorar las conversiones. ¡Gracias por tu feedback!', 'warning');
+            }
+        });
+
+        naturalAddPatternBtn.addEventListener('click', function() {
+            if (currentConversion && currentConversion.type === 'algebraic-to-natural') {
+                const newPattern = prompt('Ingresa el nuevo patrón en formato natural (usa {variables}):');
+                if (newPattern) {
+                    addNewPattern(newPattern, currentConversion.input, 'natural');
+                }
+            }
+        });
+
+        algebraicSatisfactoryBtn.addEventListener('click', function() {
+            if (currentConversion && currentConversion.type === 'natural-to-algebraic') {
+                satisfactoryConversions++;
+                totalConversions++;
+                saveMetrics();
+                updateMetrics();
+                showAlert('¡Gracias por tu feedback! La conversión fue marcada como satisfactoria.', 'success');
+            }
+        });
+
+        algebraicImproveBtn.addEventListener('click', function() {
+            if (currentConversion && currentConversion.type === 'natural-to-algebraic') {
+                totalConversions++;
+                saveMetrics();
+                updateMetrics();
+                showAlert('Trabajaremos para mejorar las conversiones. ¡Gracias por tu feedback!', 'warning');
+            }
+        });
+
+        algebraicAddPatternBtn.addEventListener('click', function() {
+            if (currentConversion && currentConversion.type === 'natural-to-algebraic') {
+                const newPattern = prompt('Ingresa el nuevo patrón en formato algebraico (usa {variables}):');
+                if (newPattern) {
+                    addNewPattern(newPattern, currentConversion.input, 'algebraic');
+                }
+            }
+        });
+
+        // Historial
+        clearHistoryBtn.addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que quieres limpiar todo el historial?')) {
+                conversionHistory = [];
+                localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
+                updateHistoryDisplay();
+                showAlert('Historial limpiado correctamente', 'success');
+            }
+        });
+
+        exportHistoryBtn.addEventListener('click', function() {
+            exportHistory();
+        });
+
+        // Limpiar resultados al cambiar el contenido de los textareas
+        naturalInput.addEventListener('input', function() {
+            naturalResult.style.display = 'none';
+        });
+
+        algebraicInput.addEventListener('input', function() {
+            algebraicResult.style.display = 'none';
+        });
+    }
+
+    // Funciones de conversión mejoradas
+    function convertNaturalToAlgebraic(text) {
+        text = text.toLowerCase().trim().replace(/\s+/g, ' ');
+        
+        // Intentar coincidencia exacta primero
+        for (const pattern of patternsData.patterns) {
+            const match = matchPattern(text, pattern.natural);
+            if (match) {
+                let result = pattern.algebraic;
+                for (const key in match) {
+                    const regex = new RegExp(`{${key}}`, 'g');
+                    result = result.replace(regex, match[key]);
+                }
+                return {
+                    expression: result,
+                    patternUsed: pattern
+                };
+            }
+        }
+        
+        // Si no hay coincidencia exacta, buscar coincidencia parcial
+        const bestMatch = findBestPartialMatch(text, patternsData.patterns, 'natural');
+        if (bestMatch && bestMatch.confidence > 0.6) {
+            let result = bestMatch.pattern.algebraic;
+            for (const key in bestMatch.variables) {
+                const regex = new RegExp(`{${key}}`, 'g');
+                result = result.replace(regex, bestMatch.variables[key]);
+            }
+            return {
+                expression: result,
+                patternUsed: bestMatch.pattern,
+                confidence: bestMatch.confidence
+            };
+        }
+        
+        return null;
+    }
+
+    function convertAlgebraicToNatural(expression) {
+        expression = expression.trim();
+        
+        // Intentar coincidencia exacta primero
+        for (const pattern of patternsData.patterns) {
+            const match = matchPattern(expression, pattern.algebraic);
+            if (match) {
+                let result = pattern.natural;
+                for (const key in match) {
+                    const regex = new RegExp(`{${key}}`, 'g');
+                    result = result.replace(regex, match[key]);
+                }
+                result = result.charAt(0).toUpperCase() + result.slice(1);
+                return {
+                    expression: result,
+                    patternUsed: pattern
+                };
+            }
+        }
+        
+        // Si no hay coincidencia exacta, buscar coincidencia parcial
+        const bestMatch = findBestPartialMatch(expression, patternsData.patterns, 'algebraic');
+        if (bestMatch && bestMatch.confidence > 0.6) {
+            let result = bestMatch.pattern.natural;
+            for (const key in bestMatch.variables) {
+                const regex = new RegExp(`{${key}}`, 'g');
+                result = result.replace(regex, bestMatch.variables[key]);
+            }
+            result = result.charAt(0).toUpperCase() + result.slice(1);
+            return {
+                expression: result,
+                patternUsed: bestMatch.pattern,
+                confidence: bestMatch.confidence
+            };
+        }
+        
+        return null;
+    }
+
+    function matchPattern(input, template) {
+        // Convertir el patrón a una expresión regular
+        const regexStr = template.replace(/{([^}]+)}/g, '(?<$1>[^\\s]+)');
+        const regex = new RegExp('^' + regexStr + '$');
+        const match = input.match(regex);
+        
+        if (match && match.groups) {
+            return match.groups;
+        }
+        
+        return null;
+    }
+
+    function findBestPartialMatch(input, patterns, type) {
+        let bestMatch = null;
+        let bestScore = 0;
+        
+        for (const pattern of patterns) {
+            const template = type === 'natural' ? pattern.natural : pattern.algebraic;
+            const score = calculateSimilarity(input, template);
+            
+            if (score > bestScore) {
+                bestScore = score;
+                bestMatch = {
+                    pattern: pattern,
+                    confidence: score,
+                    variables: extractVariables(input, template)
+                };
+            }
+        }
+        
+        return bestMatch;
+    }
+
+    function calculateSimilarity(input, template) {
+        // Implementación básica de similitud (puede mejorarse)
+        const inputWords = input.split(' ');
+        const templateWords = template.replace(/{[^}]+}/g, '').split(' ').filter(w => w);
+        
+        let matches = 0;
+        for (const word of inputWords) {
+            if (templateWords.some(tw => tw.includes(word) || word.includes(tw))) {
+                matches++;
+            }
+        }
+        
+        return matches / Math.max(inputWords.length, templateWords.length);
+    }
+
+    function extractVariables(input, template) {
+        // Extracción básica de variables (puede mejorarse)
+        const variables = {};
+        const inputParts = input.split(' ');
+        const templateParts = template.split(' ');
+        
+        for (let i = 0; i < Math.min(inputParts.length, templateParts.length); i++) {
+            if (templateParts[i].startsWith('{') && templateParts[i].endsWith('}')) {
+                const varName = templateParts[i].slice(1, -1);
+                variables[varName] = inputParts[i];
+            }
+        }
+        
+        return variables;
+    }
+
+    function addNewPattern(newPattern, example, type) {
+        const category = prompt('Categoría del patrón (opcional):');
+        const complexity = parseInt(prompt('Complejidad (1-5):')) || 1;
+        
+        const pattern = {
+            [type === 'natural' ? 'natural' : 'algebraic']: newPattern,
+            [type === 'natural' ? 'algebraic' : 'natural']: example,
+            complexity: Math.max(1, Math.min(5, complexity)),
+            category: category || 'personalizado',
+            custom: true
+        };
+        
+        patternsData.patterns.push(pattern);
+        localStorage.setItem('expressionPatterns', JSON.stringify(patternsData));
+        updateMetrics();
+        showAlert('Nuevo patrón agregado correctamente', 'success');
+    }
+
+    // Funciones de utilidad
+    function addToHistory(conversion) {
+        conversion.id = Date.now();
+        conversionHistory.unshift(conversion);
+        
+        // Mantener solo los últimos 50 elementos en el historial
+        if (conversionHistory.length > 50) {
+            conversionHistory = conversionHistory.slice(0, 50);
+        }
+        
+        localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
+        updateHistoryDisplay();
+    }
+
+    function updateHistoryDisplay() {
+        if (conversionHistory.length === 0) {
+            historyList.innerHTML = '<p class="no-history">No hay conversiones registradas aún</p>';
+            return;
+        }
+        
+        let html = '';
+        for (const item of conversionHistory) {
+            const date = new Date(item.timestamp).toLocaleString();
+            const icon = item.type === 'natural-to-algebraic' ? 
+                '<i class="fas fa-arrow-right"></i>' : 
+                '<i class="fas fa-arrow-left"></i>';
+                
+            html += `
+                <div class="history-item">
+                    <div>
+                        <div class="history-expression">${icon} ${item.input}</div>
+                        <div class="history-result">→ ${item.output}</div>
+                    </div>
+                    <div class="history-date">${date}</div>
+                </div>
+            `;
+        }
+        
+        historyList.innerHTML = html;
+    }
+
+    function updateMetrics() {
+        // Actualizar número de patrones
+        totalPatterns.textContent = patternsData.patterns.length;
+        
+        // Actualizar conteo de conversiones
+        conversionsCount.textContent = totalConversions;
+        
+        // Actualizar tasa de satisfacción
+        const rate = totalConversions > 0 ? 
+            Math.round((satisfactoryConversions / totalConversions) * 100) : 0;
+        satisfactionRate.textContent = `${rate}%`;
+        
+        // Actualizar última actualización
+        if (patternsData.metadata && patternsData.metadata.lastUpdated) {
+            lastUpdate.textContent = new Date(patternsData.metadata.lastUpdated).toLocaleDateString();
+        } else {
+            lastUpdate.textContent = new Date().toLocaleDateString();
+        }
+        
+        // Actualizar complejidad promedio
+        const avg = patternsData.patterns.reduce((sum, pattern) => sum + pattern.complexity, 0) / patternsData.patterns.length;
+        avgComplexity.textContent = avg.toFixed(1);
+    }
+
+    function saveMetrics() {
+        const metrics = {
+            satisfactory: satisfactoryConversions,
+            total: totalConversions
+        };
+        localStorage.setItem('conversionMetrics', JSON.stringify(metrics));
+    }
+
+    function exportHistory() {
+        const data = {
+            exportDate: new Date().toISOString(),
+            totalConversions: conversionHistory.length,
+            history: conversionHistory
+        };
+        
+        const dataStr = JSON.stringify(data, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        
+        const exportFileDefaultName = `historial-conversiones-${new Date().toISOString().split('T')[0]}.json`;
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+        
+        showAlert('Historial exportado correctamente', 'success');
+    }
+
+    function showAlert(message, type) {
+        alertBox.textContent = message;
+        alertBox.className = 'alert';
+        
+        switch (type) {
+            case 'success':
+                alertBox.classList.add('alert-success');
+                break;
+            case 'error':
+                alertBox.classList.add('alert-error');
+                break;
+            case 'warning':
+                alertBox.classList.add('alert-warning');
+                break;
+        }
+        
+        alertBox.style.display = 'block';
+        
+        // Ocultar la alerta después de 5 segundos
+        setTimeout(() => {
+            alertBox.style.display = 'none';
+        }, 5000);
+    }
+    </script>
+</body>
+</html>
