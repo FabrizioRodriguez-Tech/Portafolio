@@ -1,5 +1,5 @@
 /* ===========================
-   PALETA ELEGANTE
+   PALETA ELEGANTE (gris + dorado)
    =========================== */
 :root {
   --gris-fondo: #121212;
@@ -7,29 +7,56 @@
   --gris-borde: #2A2A2A;
 
   --dorado: #C9A86A;
-  --dorado-brillo: #e6c887;
+  --dorado-brillo: #E6C887;
 
   --texto: #FFFFFF;
   --texto-secundario: #CCCCCC;
 
   --radio: 14px;
   --trans: 0.25s ease;
+  --shadow-soft: 0 6px 20px rgba(0,0,0,0.45);
+  --glass: rgba(255,255,255,0.02);
 }
 
 /* ===========================
-   RESETEO
+   RESETEO Y TIPOGRAFÍA
    =========================== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+html, body {
+  height: 100%;
+}
+
+/* BACKGROUND: si quieres usar imagen coloca /assets/bg_portfolio.jpg */
+/* Si tu CSS está en css/style.css, la ruta debería ser: ../assets/bg_portfolio.jpg */
 body {
-  background: var(--gris-fondo);
+  background:
+    linear-gradient(180deg, rgba(9,9,11,0.65), rgba(9,9,11,0.65)),
+    url("/assets/fondo.png") center/cover no-repeat fixed;
+  /* Si no quieres imagen, descomenta la siguiente línea y comenta la anterior */
+  /* background: var(--gris-fondo); */
   color: var(--texto);
   padding: 40px 20px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* contenedor central */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 36px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: calc(var(--radio) + 6px);
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(6px);
 }
 
 /* ===========================
@@ -41,16 +68,17 @@ body {
 }
 
 .site-header h1 {
-  font-size: 2.7rem;
+  font-size: clamp(2rem, 3.5vw, 2.7rem);
   color: var(--dorado);
   letter-spacing: 1px;
-  text-shadow: 0 0 10px rgba(201,168,106,0.3);
+  text-shadow: 0 6px 20px rgba(201,168,106,0.12);
+  line-height: 1.02;
 }
 
 .subtitle {
   color: var(--texto-secundario);
-  margin-top: 5px;
-  font-size: 1.1rem;
+  margin-top: 6px;
+  font-size: 1.02rem;
 }
 
 /* ===========================
@@ -58,10 +86,9 @@ body {
    =========================== */
 .grid {
   display: grid;
-  gap: 25px;
-  max-width: 900px;
-  margin: auto;
+  gap: 24px;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  margin-top: 8px;
 }
 
 /* ===========================
@@ -69,48 +96,129 @@ body {
    =========================== */
 .card {
   display: block;
-  background: var(--gris-card);
-  border: 2px solid var(--gris-borde);
-  padding: 22px;
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));
+  border: 1px solid var(--gris-borde);
+  padding: 20px;
   border-radius: var(--radio);
   text-decoration: none;
   color: var(--texto);
   font-size: 1.05rem;
   font-weight: 500;
-
-  transition: var(--trans);
-  position: relative;
+  transition: transform var(--trans), box-shadow var(--trans), color var(--trans), border-color var(--trans);
   overflow: hidden;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-/* BORDE DORADO ANIMADO */
+/* BORDE DORADO ANIMADO (robusto y cross-browser) */
 .card::before {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: var(--radio);
-  padding: 2px;
-  background: linear-gradient(135deg, #d1b47a, #b89054, #d1b47a);
-  --m: 4px;   
-  -webkit-mask:
+  border-radius: inherit;
+  padding: 2px; /* grosor del borde */
+  background: linear-gradient(135deg, rgba(209,180,122,0.95), rgba(184,144,84,0.95), rgba(209,180,122,0.95));
+  -webkit-mask: 
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-
   opacity: 0;
-  transition: var(--trans);
+  transform: translateY(6px);
+  transition: opacity var(--trans), transform var(--trans);
+  pointer-events: none;
+}
+
+/* alternativa para navegadores sin mask-composite */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,0.06);
+}
+
+/* hover */
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 4px 30px rgba(201,168,106,0.06);
+  color: var(--dorado);
+  border-color: rgba(201,168,106,0.08);
 }
 
 .card:hover::before {
   opacity: 1;
+  transform: translateY(0);
 }
 
-/* EFECTO HOVER */
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 0 18px rgba(201, 168, 106, 0.25);
-  color: var(--dorado);
+/* contenido interno */
+.card .title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.card .meta {
+  color: var(--texto-secundario);
+  font-size: 0.92rem;
+  margin-bottom: 12px;
+}
+
+/* acción pequeña en la esquina */
+.card .cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85rem;
+}
+
+/* ===========================
+   BOTONES GENERALES
+   =========================== */
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.04);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
+  color: var(--texto);
+  cursor: pointer;
+  transition: transform var(--trans), box-shadow var(--trans), background var(--trans);
+}
+
+.btn--gold {
+  background: linear-gradient(180deg, var(--dorado-brillo), var(--dorado));
+  color: var(--gris-fondo);
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(201,168,106,0.12);
+}
+
+/* foco accesible */
+:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(201,168,106,0.12);
+  border-radius: 8px;
+}
+
+/* ===========================
+   RESULTADOS / FOOTER
+   =========================== */
+.result {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));
+  border: 1px solid rgba(255,255,255,0.02);
+  color: var(--texto);
 }
 
 /* ===========================
@@ -118,12 +226,51 @@ body {
    =========================== */
 .site-footer {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 36px;
   color: var(--texto-secundario);
+  font-size: 0.95rem;
 }
 
 .site-footer small {
-  border-top: 1px solid var(--gris-borde);
-  padding-top: 14px;
   display: inline-block;
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.03);
+}
+
+/* ===========================
+   UTILIDADES Y RESPONSIVE
+   =========================== */
+.kicker {
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.meta-rows {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* responsive tweaks */
+@media (max-width: 820px) {
+  .container { padding: 24px; }
+  .grid { gap: 18px; }
+  .card { padding: 18px; min-height: 130px; }
+}
+
+@media (max-width: 480px) {
+  body { padding: 20px 12px; }
+  .container { padding: 18px; }
+  .site-header h1 { font-size: 1.6rem; }
+  .subtitle { font-size: 0.95rem; }
+}
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
 }
