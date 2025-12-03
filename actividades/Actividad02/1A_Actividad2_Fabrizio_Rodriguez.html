@@ -4,524 +4,819 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Visualizador de la Recta Numérica - Fundamentos de Álgebra</title>
-
+  
   <style>
     /* ==================== RESET MEJORADO Y TIPOGRAFÍA ==================== */
-    /* =========================
-   Estilo: Gris oscuro + Dorado
-   Minimalista · Elegante · Uniforme
-   Reemplaza el <style> actual por esto
-   ========================= */
+    :root {
+      --bg: #0f1113;
+      --panel: #151617;
+      --muted: #9aa0a6;
+      --text: #ececec;
+      --gold: #c9a86a;
+      --gold-bright: #e6c887;
+      --card-border: rgba(255,255,255,0.03);
+      --glass: rgba(255,255,255,0.02);
+      --shadow: 0 12px 36px rgba(2,6,10,0.6);
+      --radius: 14px;
+      --accent-1: #dd6b6b;
+      --accent-2: #4aa3e0;
+      --accent-3: #39a86a;
+      --accent-4: #f3d06a;
+      --transition: 260ms cubic-bezier(.2,.9,.2,1);
+      --success: #27ae60;
+      --error: #e74c3c;
+      --warning: #f39c12;
+    }
 
-:root{
-  --bg: #0f1113;             /* fondo principal */
-  --panel: #151617;          /* paneles / tarjetas */
-  --muted: #9aa0a6;          /* texto secundario */
-  --text: #ececec;           /* texto principal */
-  --gold: #c9a86a;           /* dorado principal */
-  --gold-bright: #e6c887;    /* brillo dorado */
-  --card-border: rgba(255,255,255,0.03);
-  --glass: rgba(255,255,255,0.02);
-  --shadow: 0 12px 36px rgba(2,6,10,0.6);
-  --radius: 14px;
-  --accent-1: #dd6b6b; /* roja (naturales) */
-  --accent-2: #4aa3e0; /* azul (enteros) */
-  --accent-3: #39a86a; /* verde (racionales) */
-  --accent-4: #f3d06a; /* amarillo (irracionales) */
-  --transition: 260ms cubic-bezier(.2,.9,.2,1);
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: linear-gradient(180deg, #0c0d0e 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: 'Inter', 'Segoe UI', Roboto, system-ui, -apple-system, 'Poppins', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 20px;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
 
-/* -------------------------
-   Reset y tipografía
-   ------------------------- */
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{
-  background: linear-gradient(180deg, #0c0d0e 0%, var(--bg) 100%);
-  color:var(--text);
-  font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system, "Poppins", sans-serif;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  padding:34px 18px;
-  line-height:1.5;
-}
+    /* ------------------------- Contenedor principal ------------------------- */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--card-border);
+      position: relative;
+      overflow: hidden;
+    }
 
-/* -------------------------
-   Contenedor principal
-   ------------------------- */
-.container{
-  max-width: 1100px;
-  margin: 18px auto;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border-radius: var(--radius);
-  padding: 28px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--card-border);
-  position: relative;
-  overflow: hidden;
-}
+    .container::before {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+    }
 
-/* top gold accent bar */
-.container::before{
-  content:"";
-  position:absolute;
-  left:0; right:0; top:0;
-  height:4px;
-  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
-}
+    /* ------------------------- Encabezados ------------------------- */
+    h1 {
+      font-size: 2.2rem;
+      color: var(--gold);
+      letter-spacing: 0.6px;
+      margin-bottom: 15px;
+      text-align: center;
+      text-shadow: 0 6px 18px rgba(201,168,106,0.06);
+    }
 
-/* -------------------------
-   Encabezados
-   ------------------------- */
-h1{
-  font-size:2rem;
-  color:var(--gold);
-  letter-spacing:0.6px;
-  margin-bottom:12px;
-  text-align:center;
-  text-shadow: 0 6px 18px rgba(201,168,106,0.06);
-}
-h2{
-  font-size:1.28rem;
-  color:var(--text);
-  margin-bottom:14px;
-  text-align:center;
-  font-weight:600;
-}
-h3{
-  font-size:1.05rem;
-  color:var(--text);
-  margin-bottom:12px;
-  display:flex; align-items:center; gap:10px;
-}
-h3::before{
-  content:"●";
-  color:var(--gold);
-  font-size:0.9rem;
-  opacity:0.95;
-}
+    h2 {
+      font-size: 1.4rem;
+      color: var(--text);
+      margin-bottom: 20px;
+      font-weight: 600;
+      position: relative;
+      padding-bottom: 10px;
+    }
 
-/* paragraphs */
-p{ color:var(--muted); font-size:0.98rem; margin:10px 0; }
+    h2::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
 
-/* -------------------------
-   Controles / Formulario
-   ------------------------- */
-.controls{
-  border-radius:12px;
-  padding:20px;
-  margin-bottom:22px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
-  border: 1px solid rgba(255,255,255,0.02);
-  box-shadow: 0 6px 18px rgba(2,6,8,0.45);
-  transition: box-shadow var(--transition), transform var(--transition);
-}
-.controls:hover{
-  transform: translateY(-4px);
-  box-shadow: 0 16px 36px rgba(2,6,8,0.5);
-}
+    h3 {
+      font-size: 1.1rem;
+      color: var(--text);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-.input-group{ margin-bottom:18px; }
-.input-group label{
-  display:block;
-  font-weight:600;
-  color:var(--text);
-  margin-bottom:8px;
-  font-size:0.98rem;
-}
-.input-group input{
-  width:100%;
-  max-width:420px;
-  padding:12px 14px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.04);
-  background: rgba(255,255,255,0.01);
-  color:var(--text);
-  font-size:0.98rem;
-  transition: box-shadow var(--transition), border-color var(--transition), transform var(--transition);
-}
-.input-group input::placeholder{ color: rgba(255,255,255,0.35); }
-.input-group input:focus{
-  outline:none;
-  border-color: rgba(201,168,106,0.9);
-  box-shadow: 0 8px 30px rgba(201,168,106,0.06);
-  transform: translateY(-2px);
-}
+    h3::before {
+      content: "▶";
+      color: var(--gold);
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
 
-/* -------------------------
-   Botones elegantes
-   ------------------------- */
-button{
-  padding:10px 18px;
-  font-size:0.98rem;
-  font-weight:700;
-  border-radius:10px;
-  border: none;
-  cursor: pointer;
-  color: #0b0b0b;
-  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
-  box-shadow: 0 8px 20px rgba(201,168,106,0.12);
-  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
-  margin-right:10px;
-}
-button:hover{ transform: translateY(-4px); filter:brightness(1.02); }
-button:active{ transform: translateY(-1px); }
+    /* ------------------------- Controles ------------------------- */
+    .controls {
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255,255,255,0.02);
+      box-shadow: 0 6px 18px rgba(2,6,8,0.45);
+      transition: all var(--transition);
+    }
 
-/* secondary neutral button (clear) */
-button[onclick*="clearAll"], .preset-btn {
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid rgba(255,255,255,0.03);
-  box-shadow: none;
-  font-weight:700;
-}
-.preset-btn{
-  padding:8px 14px;
-  border-radius:999px;
-  transition: transform var(--transition), background var(--transition), color var(--transition);
-}
-.preset-btn:hover{
-  transform: translateY(-3px);
-  background: rgba(201,168,106,0.08);
-  color: var(--gold-bright);
-  border-color: rgba(201,168,106,0.12);
-}
+    .controls:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba(2,6,8,0.5);
+    }
 
-/* -------------------------
-   Preset section
-   ------------------------- */
-.preset-section{
-  margin-top:18px;
-  padding-top:12px;
-  border-top:1px solid rgba(255,255,255,0.02);
-}
-.preset-numbers{ display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+    .input-group {
+      margin-bottom: 20px;
+    }
 
-/* -------------------------
-   Contenedor de la recta numérica
-   ------------------------- */
-.number-line-container{
-  border-radius:12px;
-  padding:22px;
-  margin-bottom:22px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
-  border:1px solid rgba(255,255,255,0.02);
-  box-shadow: 0 10px 30px rgba(2,6,8,0.45);
-}
-.number-line-container h2{ color:var(--text); }
+    .input-group label {
+      display: block;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
 
-/* number line box */
-.number-line{
-  width:100%;
-  height:130px;
-  position:relative;
-  border-radius:10px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border:1px solid rgba(255,255,255,0.02);
-  margin:18px 0;
-  overflow:hidden;
-}
+    .input-group input {
+      width: 100%;
+      max-width: 500px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.01);
+      color: var(--text);
+      font-size: 1rem;
+      transition: all var(--transition);
+    }
 
-/* base line */
-.line{
-  position:absolute;
-  top:62px;
-  left:5%;
-  right:5%;
-  height:3px;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 10%, rgba(255,255,255,0.06) 90%, transparent 100%);
-}
+    .input-group input:focus {
+      outline: none;
+      border-color: rgba(201,168,106,0.9);
+      box-shadow: 0 8px 30px rgba(201,168,106,0.06);
+      transform: translateY(-1px);
+    }
 
-/* tick marks */
-.tick{
-  position:absolute;
-  width:2px;
-  height:20px;
-  background: rgba(255,255,255,0.06);
-  top:52px;
-}
-.tick-label{
-  position:absolute;
-  top:76px;
-  font-size:0.85rem;
-  color:var(--muted);
-  transform:translateX(-50%);
-}
+    /* ------------------------- Botones ------------------------- */
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
 
-/* -------------------------
-   Puntos en la recta (mantener clases)
-   ------------------------- */
-.number-point{
-  position:absolute;
-  width:22px;
-  height:22px;
-  top:52px;
-  transform:translateX(-50%);
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  box-shadow: 0 6px 18px rgba(2,6,8,0.5);
-  transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
-  border: 2px solid rgba(255,255,255,0.06);
-}
+    button {
+      padding: 12px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-/* hover effect */
-.number-point:hover{ transform: translateX(-50%) scale(1.18); z-index:30; }
+    .btn-primary {
+      background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+      color: #0b0b0b;
+      box-shadow: 0 8px 20px rgba(201,168,106,0.12);
+    }
 
-/* classification colors (slightly muted to match theme) */
-.number-point.naturals{ background: linear-gradient(180deg, rgba(221,107,107,0.95), rgba(210,90,90,0.95)); }
-.number-point.integers{ background: linear-gradient(180deg, rgba(74,163,224,0.95), rgba(50,140,200,0.95)); }
-.number-point.rationals{ background: linear-gradient(180deg, rgba(57,168,106,0.95), rgba(40,140,88,0.95)); }
-.number-point.irrationals{ background: linear-gradient(180deg, rgba(243,208,106,0.95), rgba(225,185,80,0.95)); }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(201,168,106,0.2);
+    }
 
-/* point label tooltip */
-.point-label{
-  position:absolute;
-  top:-38px;
-  transform:translateX(-50%);
-  background: rgba(20,20,20,0.96);
-  color:var(--text);
-  padding:6px 10px;
-  border-radius:8px;
-  font-size:0.82rem;
-  font-weight:700;
-  border: 1px solid rgba(255,255,255,0.03);
-  box-shadow: 0 10px 26px rgba(2,6,8,0.6);
-  opacity:0;
-  pointer-events:none;
-}
-.number-point:hover .point-label{ opacity:1; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
 
-/* -------------------------
-   Panels (info, points list, distance calc)
-   ------------------------- */
-.info-panels{
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap:18px;
-}
-.classification-panel, .points-panel, .distance-calculator{
-  border-radius:10px;
-  padding:18px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
-  border:1px solid rgba(255,255,255,0.02);
-  color:var(--text);
-  box-shadow: 0 8px 30px rgba(2,6,8,0.45);
-}
+    .btn-secondary:hover {
+      background: rgba(201,168,106,0.08);
+      color: var(--gold-bright);
+      transform: translateY(-2px);
+    }
 
-/* panel headings */
-.classification-panel h3,
-.points-panel h3,
-.distance-calculator h3{
-  font-size:1.05rem;
-  margin-bottom:12px;
-  color:var(--gold);
-  border-bottom: 1px dashed rgba(255,255,255,0.03);
-  padding-bottom:8px;
-}
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+    }
 
-/* classification legend */
-.legend-item{
-  display:flex; align-items:center; gap:12px; margin:10px 0;
-  padding:8px; border-radius:8px; background: rgba(255,255,255,0.01);
-  border:1px solid rgba(255,255,255,0.01);
-}
-.legend-color{
-  width:22px; height:22px; border-radius:50%; border:2px solid rgba(255,255,255,0.04);
-  box-shadow: 0 6px 18px rgba(2,6,8,0.4);
-}
-.legend-color.naturals{ background:var(--accent-1); }
-.legend-color.integers{ background:var(--accent-2); }
-.legend-color.rationals{ background:var(--accent-3); }
-.legend-color.irrationals{ background:var(--accent-4); }
+    /* ------------------------- Presets ------------------------- */
+    .preset-section {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.02);
+    }
 
-/* points list items */
-.point-item{
-  display:flex; justify-content:space-between; align-items:center;
-  padding:12px; margin:10px 0; border-radius:8px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.015));
-  border-left: 4px solid rgba(255,255,255,0.02);
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-.point-item:hover{ transform: translateX(6px); box-shadow: 0 12px 30px rgba(2,6,8,0.45); }
+    .preset-numbers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
 
-/* empty state */
-.empty-state p{ color:var(--muted); text-align:center; margin:18px 0; }
+    .preset-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.03);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-size: 0.9rem;
+    }
 
-/* distance result */
-.distance-placeholder{
-  text-align:center;
-  padding:22px;
-  border-radius:8px;
-  border:2px dashed rgba(255,255,255,0.03);
-  color:var(--muted);
-  background: rgba(255,255,255,0.01);
-}
-.distance-result{
-  padding:18px; border-radius:8px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));
-  border:1px solid rgba(255,255,255,0.02);
-  color:var(--text);
-  text-align:center;
-  font-weight:700;
-}
+    .preset-btn:hover {
+      background: rgba(201,168,106,0.1);
+      color: var(--gold-bright);
+      border-color: rgba(201,168,106,0.2);
+      transform: translateY(-2px);
+    }
 
-/* select custom elements */
-.custom-select{ position:relative; width:100%; max-width:400px; }
-.select-selected{
-  padding:12px 14px; border-radius:10px; cursor:pointer; font-weight:700;
-  background: rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.02);
-  color:var(--muted);
-}
-.select-items{
-  position:absolute; left:0; right:0; top:100%; margin-top:6px;
-  background: rgba(18,18,18,0.98); border-radius:10px; overflow:hidden;
-  box-shadow: 0 12px 40px rgba(2,6,8,0.6); display:none; z-index:60;
-  border:1px solid rgba(255,255,255,0.03);
-}
-.select-items.show{ display:block; }
-.select-items div{ padding:12px 14px; cursor:pointer; color:var(--muted); transition: background var(--transition); }
-.select-items div:hover{ background: rgba(201,168,106,0.08); color:var(--gold-bright); }
+    /* ------------------------- Recta Numérica ------------------------- */
+    .number-line-container {
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255,255,255,0.02);
+      box-shadow: 0 10px 30px rgba(2,6,8,0.45);
+    }
 
-/* small responsive tweaks */
-@media (max-width:800px){
-  body{ padding:18px; }
-  .container{ padding:18px; }
-  .number-line{ height:120px; }
-  h1{ font-size:1.6rem; }
-  .point-item{ flex-direction:column; align-items:flex-start; gap:8px; }
-  button{ width:100%; margin-bottom:10px; }
-}
+    .number-line-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
 
-/* subtle fade-in animation for panels */
-@keyframes fadeInUp {
-  from { opacity:0; transform: translateY(10px); }
-  to { opacity:1; transform: translateY(0); }
-}
-.classification-panel, .points-panel, .distance-calculator, .number-line-container, .controls{
-  animation: fadeInUp 420ms ease both;
-}
+    .zoom-controls {
+      display: flex;
+      gap: 10px;
+    }
 
+    .number-line {
+      width: 100%;
+      height: 140px;
+      position: relative;
+      border-radius: 10px;
+      background: rgba(10,12,14,0.5);
+      border: 1px solid rgba(255,255,255,0.02);
+      margin: 20px 0;
+      overflow: hidden;
+    }
+
+    .line {
+      position: absolute;
+      top: 70px;
+      left: 5%;
+      right: 5%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 10%, rgba(255,255,255,0.1) 90%, transparent 100%);
+    }
+
+    .tick {
+      position: absolute;
+      width: 2px;
+      height: 20px;
+      background: rgba(255,255,255,0.1);
+      top: 60px;
+    }
+
+    .tick-label {
+      position: absolute;
+      top: 85px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      transform: translateX(-50%);
+      font-weight: 500;
+    }
+
+    .tick-label.main {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ------------------------- Puntos ------------------------- */
+    .number-point {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      top: 58px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(2,6,8,0.5);
+      transition: all var(--transition);
+      border: 2px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .number-point:hover {
+      transform: translateX(-50%) scale(1.25);
+      z-index: 100;
+    }
+
+    .number-point.naturals {
+      background: linear-gradient(180deg, var(--accent-1), rgba(221,107,107,0.8));
+    }
+    .number-point.integers {
+      background: linear-gradient(180deg, var(--accent-2), rgba(74,163,224,0.8));
+    }
+    .number-point.rationals {
+      background: linear-gradient(180deg, var(--accent-3), rgba(57,168,106,0.8));
+    }
+    .number-point.irrationals {
+      background: linear-gradient(180deg, var(--accent-4), rgba(243,208,106,0.8));
+    }
+
+    .point-label {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20,20,20,0.98);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 10px 30px rgba(2,6,8,0.6);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition);
+      white-space: nowrap;
+      z-index: 1000;
+    }
+
+    .number-point:hover .point-label {
+      opacity: 1;
+    }
+
+    .point-value {
+      font-size: 0.7rem;
+      color: white;
+      font-weight: bold;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    /* ------------------------- Paneles ------------------------- */
+    .info-panels {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+      margin-top: 20px;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+      border-radius: 12px;
+      padding: 25px;
+      border: 1px solid rgba(255,255,255,0.02);
+      box-shadow: 0 8px 30px rgba(2,6,8,0.45);
+    }
+
+    .panel h3 {
+      color: var(--gold);
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 15px 0;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.01);
+      transition: all var(--transition);
+    }
+
+    .legend-item:hover {
+      background: rgba(255,255,255,0.02);
+      transform: translateX(5px);
+    }
+
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .points-list {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .points-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .points-list::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.02);
+      border-radius: 3px;
+    }
+
+    .points-list::-webkit-scrollbar-thumb {
+      background: var(--gold);
+      border-radius: 3px;
+    }
+
+    .point-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      margin: 8px 0;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.01);
+      border-left: 4px solid;
+      transition: all var(--transition);
+    }
+
+    .point-item:hover {
+      background: rgba(255,255,255,0.02);
+      transform: translateX(5px);
+    }
+
+    .point-item.naturals { border-left-color: var(--accent-1); }
+    .point-item.integers { border-left-color: var(--accent-2); }
+    .point-item.rationals { border-left-color: var(--accent-3); }
+    .point-item.irrationals { border-left-color: var(--accent-4); }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+    }
+
+    .empty-state i {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      opacity: 0.5;
+    }
+
+    /* ------------------------- Calculadora ------------------------- */
+    .distance-calculator .distance-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .custom-select {
+      position: relative;
+      width: 100%;
+    }
+
+    .select-selected {
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.01);
+      border: 1px solid rgba(255,255,255,0.03);
+      color: var(--text);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .select-selected:hover {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .select-items {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(20,20,20,0.98);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 15px 40px rgba(2,6,8,0.7);
+      display: none;
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .select-items.show {
+      display: block;
+    }
+
+    .select-items div {
+      padding: 12px 16px;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all var(--transition);
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+    }
+
+    .select-items div:last-child {
+      border-bottom: none;
+    }
+
+    .select-items div:hover {
+      background: rgba(201,168,106,0.1);
+      color: var(--gold-bright);
+    }
+
+    .distance-result {
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.03);
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .distance-result h4 {
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    /* ------------------------- Toast Notifications ------------------------- */
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 10px;
+      background: rgba(20,20,20,0.95);
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 10px 30px rgba(2,6,8,0.7);
+      color: white;
+      z-index: 10000;
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.success {
+      border-left: 4px solid var(--success);
+    }
+
+    .toast.error {
+      border-left: 4px solid var(--error);
+    }
+
+    .toast.info {
+      border-left: 4px solid var(--accent-2);
+    }
+
+    /* ------------------------- Responsive ------------------------- */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .info-panels {
+        grid-template-columns: 1fr;
+      }
+      
+      .distance-calculator .distance-inputs {
+        grid-template-columns: 1fr;
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+      
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* ------------------------- Animaciones ------------------------- */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease;
+    }
+
+    .slide-in {
+      animation: slideIn 0.3s ease;
+    }
+
+    /* ------------------------- Estilos de utilidad ------------------------- */
+    .mb-20 { margin-bottom: 20px; }
+    .mt-20 { margin-top: 20px; }
+    .text-center { text-align: center; }
+    .text-muted { color: var(--muted); }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-10 { gap: 10px; }
+    .gap-20 { gap: 20px; }
   </style>
 </head>
 <body>
-  <!-- El resto del código HTML permanece exactamente igual -->
   <div class="container">
-    <!-- Encabezado: personalizar con datos reales -->
-    <h1>Visualizador de la Recta Numérica</h1>
+    <!-- Encabezado -->
+    <header class="text-center mb-20">
+      <h1>📐 Visualizador de la Recta Numérica</h1>
+      <p class="text-muted">Explora y visualiza números reales en la recta numérica con clasificación automática</p>
+    </header>
+
     <!-- Controles de entrada -->
     <section class="controls">
-      <h2>Controles de Entrada</h2>
-
+      <h2>➕ Agregar Números</h2>
+      
       <div class="input-group">
-        <label for="numberInput">Valor del número:</label>
-        <input type="text" id="numberInput" placeholder="Ej: sqrt(7), 2*π, √2, 1/3" />
-        <div>
-          <button type="button" onclick="addNumber()">Agregar Número</button>
-          <button type="button" onclick="clearAll()">Limpiar Todo</button>
-        </div>
+        <label for="numberInput">
+          <strong>Ingresa un número o expresión matemática:</strong>
+        </label>
+        <input 
+          type="text" 
+          id="numberInput" 
+          placeholder="Ejemplos: sqrt(7), 2*π, √2, 1/3, e^2, -5.75"
+          autocomplete="off"
+        />
+        <p class="text-muted" style="margin-top: 8px; font-size: 0.9rem;">
+          Soporta: fracciones (1/2), raíces (√2, sqrt(3)), constantes (π, e, φ), expresiones (2*π, e^2)
+        </p>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="addNumber()">
+          <span>➕</span> Agregar Número
+        </button>
+        <button class="btn-secondary" onclick="clearAll()">
+          <span>🗑️</span> Limpiar Todo
+        </button>
+        <button class="btn-secondary" onclick="showExamples()">
+          <span>❓</span> Ver Ejemplos
+        </button>
       </div>
 
       <!-- Números predefinidos -->
       <div class="preset-section">
         <h3>Números Predefinidos</h3>
-        <p>Haz clic en cualquier número para agregarlo automáticamente:</p>
-
+        <p class="text-muted">Haz clic para agregar automáticamente:</p>
+        
         <div class="preset-numbers">
           <span class="preset-btn" onclick="addPresetNumber('π')">π</span>
           <span class="preset-btn" onclick="addPresetNumber('e')">e</span>
+          <span class="preset-btn" onclick="addPresetNumber('φ')">φ</span>
           <span class="preset-btn" onclick="addPresetNumber('√2')">√2</span>
           <span class="preset-btn" onclick="addPresetNumber('√3')">√3</span>
-          <span class="preset-btn" onclick="addPresetNumber('φ')">φ</span>
-          <span class="preset-btn" onclick="addPresetNumber('1/3')">1/3</span>
-          <span class="preset-btn" onclick="addPresetNumber('-1/2')">-1/2</span>
-          <span class="preset-btn" onclick="addPresetNumber('2.5')">2.5</span>
+          <span class="preset-btn" onclick="addPresetNumber('√5')">√5</span>
+          <span class="preset-btn" onclick="addPresetNumber('1/2')">½</span>
+          <span class="preset-btn" onclick="addPresetNumber('1/3')">⅓</span>
+          <span class="preset-btn" onclick="addPresetNumber('2/3')">⅔</span>
           <span class="preset-btn" onclick="addPresetNumber('-√2')">-√2</span>
-          <span class="preset-btn" onclick="addPresetNumber('2*π')">2*π</span>
+          <span class="preset-btn" onclick="addPresetNumber('2*π')">2π</span>
+          <span class="preset-btn" onclick="addPresetNumber('π/2')">π/2</span>
+          <span class="preset-btn" onclick="addPresetNumber('e^2')">e²</span>
         </div>
       </div>
     </section>
 
     <!-- Recta numérica -->
     <section class="number-line-container">
-      <h2>Recta Numérica Interactiva</h2>
-      <div class="number-line" id="numberLine">
-        <!-- Los elementos de la recta se generan dinámicamente con JavaScript -->
+      <div class="number-line-header">
+        <h2>📈 Recta Numérica Interactiva</h2>
+        <div class="zoom-controls">
+          <button class="btn-secondary btn-small" onclick="zoomOut()">
+            <span>🔍</span> -
+          </button>
+          <span class="text-muted" style="margin: 0 10px; display: flex; align-items: center;">
+            Rango: ±<span id="rangeValue">10</span>
+          </span>
+          <button class="btn-secondary btn-small" onclick="zoomIn()">
+            <span>🔍</span> +
+          </button>
+        </div>
       </div>
-      <p class="range-info">
-        <small>Rango de visualización: -10 a +10 (números fuera de este rango no se mostrarán)</small>
+      
+      <div class="number-line" id="numberLine">
+        <!-- Línea y puntos se generan dinámicamente -->
+      </div>
+      
+      <p class="text-center text-muted" style="margin-top: 15px;">
+        <small>Haz clic en cualquier punto para eliminarlo • Arrastra para mover (próximamente)</small>
       </p>
     </section>
 
     <!-- Paneles informativos -->
-    <section class="info-panels">
+    <div class="info-panels">
       <!-- Panel de clasificación -->
-      <div class="classification-panel">
-        <h3>Clasificación de Conjuntos Numéricos</h3>
+      <div class="panel">
+        <h3>🎨 Clasificación de Números</h3>
         <div class="classification-legend">
           <div class="legend-item">
-            <div class="legend-color naturals"></div>
-            <span><strong>ℕ - Naturales:</strong> {1, 2, 3, 4, ...}</span>
+            <div class="legend-color" style="background: var(--accent-1);"></div>
+            <div>
+              <strong>ℕ - Naturales</strong>
+              <p class="text-muted" style="font-size: 0.9rem; margin-top: 4px;">
+                {1, 2, 3, 4, ...} • Enteros positivos
+              </p>
+            </div>
           </div>
+          
           <div class="legend-item">
-            <div class="legend-color integers"></div>
-            <span><strong>ℤ - Enteros:</strong> {..., -2, -1, 0, 1, 2, ...}</span>
+            <div class="legend-color" style="background: var(--accent-2);"></div>
+            <div>
+              <strong>ℤ - Enteros</strong>
+              <p class="text-muted" style="font-size: 0.9rem; margin-top: 4px;">
+                {..., -2, -1, 0, 1, 2, ...} • Incluye negativos y cero
+              </p>
+            </div>
           </div>
+          
           <div class="legend-item">
-            <div class="legend-color rationals"></div>
-            <span><strong>ℚ - Racionales:</strong> Fracciones y decimales finitos/periódicos</span>
+            <div class="legend-color" style="background: var(--accent-3);"></div>
+            <div>
+              <strong>ℚ - Racionales</strong>
+              <p class="text-muted" style="font-size: 0.9rem; margin-top: 4px;">
+                Fracciones a/b • Decimales finitos/periódicos
+              </p>
+            </div>
           </div>
+          
           <div class="legend-item">
-            <div class="legend-color irrationals"></div>
-            <span><strong>ℝ-ℚ - Irracionales:</strong> π, e, √2, decimales infinitos no periódicos</span>
+            <div class="legend-color" style="background: var(--accent-4);"></div>
+            <div>
+              <strong>ℝ-ℚ - Irracionales</strong>
+              <p class="text-muted" style="font-size: 0.9rem; margin-top: 4px;">
+                π, e, √2, φ • Decimales infinitos no periódicos
+              </p>
+            </div>
           </div>
         </div>
-
-        <div class="classification-info">
-          <h4>Propiedades importantes:</h4>
-          <ul>
-            <li><strong>ℕ ⊂ ℤ:</strong> Todo número natural es entero</li>
-            <li><strong>ℤ ⊂ ℚ:</strong> Todo entero puede escribirse como fracción</li>
-            <li><strong>ℚ ∪ (ℝ-ℚ) = ℝ:</strong> Los reales son la unión de racionales e irracionales</li>
-            <li><strong>ℚ ∩ (ℝ-ℚ) = ∅:</strong> No existen números que sean ambos</li>
+        
+        <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.03);">
+          <h4>💡 Relaciones entre conjuntos:</h4>
+          <ul style="color: var(--muted); padding-left: 20px; margin-top: 10px;">
+            <li style="margin-bottom: 5px;">ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ</li>
+            <li style="margin-bottom: 5px;">ℝ = ℚ ∪ (ℝ-ℚ)</li>
+            <li style="margin-bottom: 5px;">ℚ ∩ (ℝ-ℚ) = ∅</li>
           </ul>
         </div>
       </div>
 
       <!-- Panel de lista de puntos -->
-      <div class="points-panel">
-        <h3>Puntos en la Recta</h3>
-        <div id="pointsList">
+      <div class="panel">
+        <h3>📋 Puntos en la Recta</h3>
+        <div class="points-list" id="pointsList">
           <div class="empty-state">
-            <p>Agrega números para ver su clasificación automática aquí</p>
-            <small>Los puntos aparecerán ordenados de menor a mayor</small>
+            <div>📝</div>
+            <p>Agrega números para ver su clasificación</p>
+            <small class="text-muted">Los puntos se ordenan automáticamente</small>
           </div>
         </div>
       </div>
 
       <!-- Panel calculadora de distancias -->
-      <div class="distance-calculator">
-        <h3>Calculadora de Distancias</h3>
-        <p class="calculator-description">
-          Selecciona dos puntos para calcular la distancia entre ellos en la recta numérica.
+      <div class="panel">
+        <h3>📏 Calculadora de Distancias</h3>
+        <p class="text-muted" style="margin-bottom: 20px;">
+          Selecciona dos puntos para calcular la distancia entre ellos
         </p>
-
+        
         <div class="distance-inputs">
-          <div class="distance-field">
-            <label>Punto A:</label>
-            <div class="custom-select" id="pointA-container" data-value="">
+          <div>
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Punto A:</label>
+            <div class="custom-select" id="pointA-container">
               <div class="select-selected" id="pointA-selected">Selecciona un punto</div>
               <div class="select-items" id="pointA-items">
                 <div data-value="">Selecciona un punto</div>
               </div>
             </div>
           </div>
-
-          <div class="distance-field">
-            <label>Punto B:</label>
-            <div class="custom-select" id="pointB-container" data-value="">
+          
+          <div>
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Punto B:</label>
+            <div class="custom-select" id="pointB-container">
               <div class="select-selected" id="pointB-selected">Selecciona un punto</div>
               <div class="select-items" id="pointB-items">
                 <div data-value="">Selecciona un punto</div>
@@ -529,355 +824,535 @@ button[onclick*="clearAll"], .preset-btn {
             </div>
           </div>
         </div>
-
-        <button type="button" class="distance-btn" onclick="calculateDistance()">Calcular Distancia</button>
-
+        
+        <button class="btn-primary" onclick="calculateDistance()" style="width: 100%; margin-top: 20px;">
+          <span>🧮</span> Calcular Distancia
+        </button>
+        
         <div id="distanceResult">
-          <div class="distance-placeholder">
-            <div><strong>Calculadora de Distancias</strong></div>
-            <div>Los resultados aparecerán aquí</div>
+          <div class="empty-state" style="padding: 30px 20px;">
+            <div>📐</div>
+            <p>Los resultados aparecerán aquí</p>
           </div>
         </div>
       </div>
-    </section>
-
+    </div>
   </div>
 
-  <!-- ==================== JAVASCRIPT ==================== -->
+  <!-- Toast Notifications -->
+  <div id="toastContainer"></div>
+
+  <!-- JavaScript -->
   <script>
-    /* ==================== VARIABLES GLOBALES ==================== */
+    // ==================== VARIABLES GLOBALES ====================
     let points = [];
     let currentRange = 10;
+    let toastId = 0;
 
-    /* ==================== CONSTANTES MATEMÁTICAS ==================== */
+    // ==================== CONSTANTES MATEMÁTICAS ====================
     const CONSTANTS = {
       'π': Math.PI,
       'pi': Math.PI,
       'e': Math.E,
       'φ': (1 + Math.sqrt(5)) / 2,
       'phi': (1 + Math.sqrt(5)) / 2,
-      'τ': 2 * Math.PI,
-      'tau': 2 * Math.PI,
-      'ln2': Math.LN2,
-      'ln10': Math.LN10,
       '√2': Math.sqrt(2),
       '√3': Math.sqrt(3),
       '√5': Math.sqrt(5),
       '√7': Math.sqrt(7),
       '√8': Math.sqrt(8),
       '√10': Math.sqrt(10),
-      '√11': Math.sqrt(11),
-      '√12': Math.sqrt(12),
       '√13': Math.sqrt(13),
-      '√15': Math.sqrt(15),
-      '√17': Math.sqrt(17),
-      '√19': Math.sqrt(19),
-      '√20': Math.sqrt(20),
-      '-√2': -Math.sqrt(2),
-      '-√3': -Math.sqrt(3),
-      '-√5': -Math.sqrt(5)
+      '√17': Math.sqrt(17)
     };
 
-    console.log('Variables y constantes inicializadas correctamente');
+    // ==================== FUNCIONES DE UTILIDAD ====================
+    function showToast(message, type = 'info', duration = 3000) {
+      const container = document.getElementById('toastContainer');
+      const id = `toast-${toastId++}`;
+      
+      const toast = document.createElement('div');
+      toast.id = id;
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+        <span>${message}</span>
+      `;
+      
+      container.appendChild(toast);
+      
+      // Animar entrada
+      setTimeout(() => toast.classList.add('show'), 10);
+      
+      // Eliminar después de la duración
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+          }
+        }, 300);
+      }, duration);
+    }
 
-    /* =========== FUNCIÓN PARA CONVERTIR TEXTO EN NÚMERO =========== */
     function parseNumber(input) {
-      if (!input || typeof input !== 'string') return null;
-      // Limpiar el input de espacios en blanco
+      if (!input || typeof input !== 'string') {
+        showToast('Entrada vacía o no válida', 'error');
+        return null;
+      }
+      
       input = input.trim().replace(/\s+/g, '');
-
-      // Verificar si es una constante matemática directa
+      
+      // Verificar si es una constante directa
       if (CONSTANTS.hasOwnProperty(input)) {
         return CONSTANTS[input];
       }
-
-      // Reemplazar constantes matemáticas en la expresión
-      let processedInput = input;
+      
+      // Reemplazar constantes en la expresión
+      let expression = input;
       for (const [symbol, value] of Object.entries(CONSTANTS)) {
-        // Crear expresión regular para reemplazar el símbolo (escapando)
         const regex = new RegExp(symbol.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-        processedInput = processedInput.replace(regex, value.toString());
+        expression = expression.replace(regex, `(${value})`);
       }
-
-      // Manejar fracciones simples (sin otros operadores)
+      
+      // Manejar fracciones simples
       if (input.includes('/') && !input.includes('*') && !input.includes('+') && !input.includes('-', 1)) {
         const parts = input.split('/');
         if (parts.length === 2) {
-          const numerator = parseFloat(parts[0]);
-          const denominator = parseFloat(parts[1]);
-          if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
-            return numerator / denominator;
+          const num = parseFloat(parts[0]);
+          const den = parseFloat(parts[1]);
+          if (!isNaN(num) && !isNaN(den) && den !== 0) {
+            return num / den;
           }
         }
       }
-
-      // Manejar raíces cuadradas básicas con símbolo √
-      if (input.startsWith('√') && !input.includes('*') && !input.includes('+') && !input.includes('-', 1)) {
+      
+      // Manejar raíces cuadradas con √
+      if (input.startsWith('√')) {
         const radicand = parseFloat(input.slice(1));
         if (!isNaN(radicand) && radicand >= 0) {
           return Math.sqrt(radicand);
         }
       }
-
-      // Manejar raíces cuadradas negativas
-      if (input.startsWith('-√') && !input.includes('*') && !input.includes('+')) {
-        const radicand = parseFloat(input.slice(2));
-        if (!isNaN(radicand) && radicand >= 0) {
-          return -Math.sqrt(radicand);
-        }
-      }
-
-      // Manejar función sqrt() con cualquier expresión dentro
+      
+      // Manejar sqrt()
       if (input.includes('sqrt(')) {
         const match = input.match(/sqrt\(([^)]+)\)/);
         if (match) {
-          const innerExpression = match[1];
-          let innerValue = null;
-
-          try {
-            // Para fracciones simples dentro de sqrt()
-            if (innerExpression.includes('/') && !innerExpression.includes('*') && !innerExpression.includes('+') && !innerExpression.includes('-', 1)) {
-              const parts = innerExpression.split('/');
-              if (parts.length === 2) {
-                const num = parseFloat(parts[0]);
-                const den = parseFloat(parts[1]);
-                if (!isNaN(num) && !isNaN(den) && den !== 0) {
-                  innerValue = num / den;
-                }
-              }
-            } else {
-              // Para otras expresiones, evaluar directamente (permitiendo números y operadores)
-              const safeChars = /^[0-9+\-*/.() ]+$/;
-              if (safeChars.test(innerExpression)) {
-                innerValue = Function('"use strict"; return (' + innerExpression + ')')();
-              } else {
-                innerValue = parseFloat(innerExpression);
-              }
-            }
-
-            // Si el valor interno es válido, calcular su raíz
-            if (!isNaN(innerValue) && innerValue >= 0) {
-              return Math.sqrt(innerValue);
-            }
-          } catch (e) {
-            // Si falla la evaluación, continuar con el flujo
+          const inner = match[1];
+          const innerValue = parseNumber(inner);
+          if (innerValue !== null && innerValue >= 0) {
+            return Math.sqrt(innerValue);
           }
         }
       }
-
-      // Evaluar expresiones matemáticas más complejas
+      
+      // Manejar exponentes
+      if (input.includes('^')) {
+        const parts = input.split('^');
+        if (parts.length === 2) {
+          const base = parseNumber(parts[0]);
+          const exponent = parseNumber(parts[1]);
+          if (base !== null && exponent !== null) {
+            return Math.pow(base, exponent);
+          }
+        }
+      }
+      
+      // Evaluar expresión matemática
       try {
-        // Reemplazar operador ^ por ** para potencias
-        processedInput = processedInput.replace(/\^/g, '**');
-
-        // Verificar que solo contiene caracteres seguros para evaluar
+        // Reemplazar ^ por ** para potencias
+        expression = expression.replace(/\^/g, '**');
+        
+        // Verificar seguridad
         const safeChars = /^[0-9+\-*/.() ]+$/;
-        if (safeChars.test(processedInput)) {
-          const result = Function('"use strict"; return (' + processedInput + ')')();
+        if (safeChars.test(expression.replace(/[()]/g, ''))) {
+          const result = Function('"use strict"; return (' + expression + ')')();
           if (typeof result === 'number' && !isNaN(result) && isFinite(result)) {
             return result;
           }
         }
       } catch (e) {
-        // Si falla la evaluación, continuar con el parsing normal
+        // Continuar con otros métodos
       }
-
-      // Intentar parsear como número decimal normal
-      const num = parseFloat(processedInput);
+      
+      // Intentar parsear como número decimal
+      const num = parseFloat(expression);
       if (!isNaN(num)) {
         return num;
       }
-
-      // Si nada funcionó, retornar null
+      
+      showToast(`No se pudo interpretar: ${input}`, 'error');
       return null;
     }
 
-    /* ==================== FUNCIONES DE CLASIFICACIÓN ===================== */
+    // ==================== CLASIFICACIÓN DE NÚMEROS ====================
     function classifyNumber(num, originalInput) {
-      if (num === null || typeof num !== 'number' || isNaN(num)) return 'rationals';
-
-      // Verificar si es un número natural (entero positivo)
+      if (num === null || typeof num !== 'number' || isNaN(num)) {
+        return 'rationals';
+      }
+      
+      // Verificar si es natural
       if (num > 0 && Number.isInteger(num)) {
         return 'naturals';
       }
-
-      // Verificar si es un número entero
+      
+      // Verificar si es entero
       if (Number.isInteger(num)) {
         return 'integers';
       }
-
-      // Lista de constantes irracionales conocidas
-      const irrationalConstants = [
-        'π', 'pi', 'e', 'φ', 'phi', 'τ', 'tau', 'ln2', 'ln10',
-        '√2', '√3', '√5', '√7', '√8', '√10', '√11', '√12', '√13', '√15', '√17', '√19', '√20',
-        '-√2', '-√3', '-√5'
-      ];
-
-      // Si es una constante irracional directa
+      
+      // Lista de constantes irracionales
+      const irrationalConstants = Object.keys(CONSTANTS);
       if (irrationalConstants.includes(originalInput)) {
         return 'irrationals';
       }
-
-      // Verificar si contiene sqrt() y clasificar según el contenido
-      if (originalInput.includes('sqrt(')) {
-        const sqrtMatch = originalInput.match(/sqrt\(([^)]+)\)/);
-        if (sqrtMatch) {
-          const innerExpression = sqrtMatch[1];
-          let innerValue = NaN;
-          try {
-            if (innerExpression.includes('/')) {
-              const parts = innerExpression.split('/');
-              if (parts.length === 2) {
-                const n = parseFloat(parts[0]);
-                const d = parseFloat(parts[1]);
-                if (!isNaN(n) && !isNaN(d) && d !== 0) innerValue = n / d;
-              }
-            } else {
-              innerValue = parseFloat(innerExpression);
-            }
-
-            if (!isNaN(innerValue) && innerValue >= 0) {
-              const sqrtResult = Math.sqrt(innerValue);
-              if (Number.isInteger(sqrtResult)) {
-                if (sqrtResult > 0) return 'naturals';
-                if (sqrtResult === 0) return 'integers';
-              } else {
-                return 'irrationals';
-              }
-            }
-          } catch (e) {
-            return 'irrationals';
-          }
-        }
-      }
-
-      // Verificar si contiene símbolo √ y no es cuadrado perfecto
-      if (originalInput.includes('√')) {
+      
+      // Verificar si contiene sqrt
+      if (originalInput.includes('sqrt(') || originalInput.includes('√')) {
         return 'irrationals';
       }
-
-      // Analizar expresiones con operaciones matemáticas
-      if (originalInput.includes('*') || originalInput.includes('+') || originalInput.includes('-') || originalInput.includes('/')) {
-        const irrationalSymbols = ['π', 'pi', 'e', 'φ', 'phi', 'τ', 'tau', 'ln2', 'ln10', '√', 'sqrt'];
-        const containsIrrationals = irrationalSymbols.some(symbol => originalInput.includes(symbol));
-        if (containsIrrationals) {
-          // Detectar casos especiales que resultan racionales (π/π, e/e, √2/√2, etc.)
-          const specialRationalCases = [
-            /π\/π/, /pi\/pi/, /e\/e/, /φ\/φ/, /phi\/phi/,
-            /τ\/τ/, /tau\/tau/,
-            /√2\/√2/, /√3\/√3/, /√5\/√5/,
-            /π-π/, /pi-pi/, /e-e/, /φ-φ/, /phi-phi/
-          ];
-
-          const cleaned = originalInput.replace(/\s/g, '');
-          const isSpecialRational = specialRationalCases.some(pattern => pattern.test(cleaned));
-          if (isSpecialRational) {
-            if (num > 0 && Number.isInteger(num)) return 'naturals';
-            if (Number.isInteger(num)) return 'integers';
-            return 'rationals';
-          }
-          return 'irrationals';
+      
+      // Verificar si contiene constantes irracionales
+      const hasIrrationalSymbol = Object.keys(CONSTANTS).some(symbol => 
+        originalInput.includes(symbol)
+      );
+      
+      if (hasIrrationalSymbol) {
+        // Casos especiales que son racionales
+        const specialCases = [
+          /π\/π/, /pi\/pi/, /e\/e/, /φ\/φ/,
+          /π-π/, /pi-pi/, /e-e/, /φ-φ/,
+          /√2\/√2/, /√3\/√3/, /√5\/√5/
+        ];
+        
+        const cleaned = originalInput.replace(/\s/g, '');
+        if (specialCases.some(pattern => pattern.test(cleaned))) {
+          if (num > 0 && Number.isInteger(num)) return 'naturals';
+          if (Number.isInteger(num)) return 'integers';
+          return 'rationals';
         }
+        return 'irrationals';
       }
-
-      // Si contiene '/', asumir racional
-      if (originalInput.includes('/')) return 'rationals';
-
-      // Si es decimal, asumimos racional (a menos que se detecte irracional explícita)
+      
+      // Por defecto, racional
       return 'rationals';
     }
 
-    function getClassificationName(classification) {
-      const names = {
-        'naturals': 'ℕ (Naturales)',
-        'integers': 'ℤ (Enteros)',
-        'rationals': 'ℚ (Racionales)',
-        'irrationals': 'ℝ-ℚ (Irracionales)'
-      };
-      return names[classification] || 'No clasificado';
-    }
-
-    function getClassificationColor(classification) {
-      const colors = {
-        'naturals': '#e74c3c',   // Rojo
-        'integers': '#3498db',   // Azul
-        'rationals': '#27ae60',  // Verde
-        'irrationals': '#f1c40f' // Amarillo
-      };
-      return colors[classification] || '#95a5a6';
-    }
-
-    /* ==================== FUNCIONES DE INTERFAZ DE USUARIO ===================== */
+    // ==================== FUNCIONES DE INTERFAZ ====================
     function addNumber() {
       const input = document.getElementById('numberInput').value;
+      
       if (!input) {
-        alert('Por favor ingresa un número');
+        showToast('Por favor ingresa un número', 'error');
         return;
       }
-
+      
       const value = parseNumber(input);
-      if (value === null) {
-        alert('Formato de número no válido. Ejemplos válidos: sqrt(7), 2*π, 1/e, √2, -1/2');
-        return;
-      }
-
+      if (value === null) return;
+      
       if (Math.abs(value) > currentRange) {
-        alert(`El número está fuera del rango actual (-${currentRange} a ${currentRange}). El rango se puede modificar en el código.`);
+        showToast(`El número debe estar entre -${currentRange} y ${currentRange}`, 'error');
         return;
       }
-
-      // Verificar si el punto ya existe (con tolerancia)
-      const existingPoint = points.find(p => Math.abs(p.value - value) < 0.0001);
-      if (existingPoint) {
-        alert('Este número ya está en la recta numérica');
+      
+      // Verificar si ya existe
+      const exists = points.some(p => Math.abs(p.value - value) < 0.0001);
+      if (exists) {
+        showToast('Este número ya está en la recta', 'warning');
         return;
       }
-
+      
       const classification = classifyNumber(value, input);
-
-      points.push({
+      const point = {
         value: value,
         originalInput: input,
-        classification: classification
-      });
-
+        classification: classification,
+        id: Date.now() + Math.random()
+      };
+      
+      points.push(point);
       document.getElementById('numberInput').value = '';
       updateDisplay();
-
-      console.log(`Número agregado: ${input} = ${value} (${classification})`);
+      
+      showToast(`✅ ${input} agregado como ${classification}`, 'success');
     }
 
     function addPresetNumber(input) {
-      const value = parseNumber(input);
-      if (value === null || Math.abs(value) > currentRange) {
-        alert(`El número ${input} está fuera del rango actual`);
-        return;
-      }
-
-      const existingPoint = points.find(p => Math.abs(p.value - value) < 0.0001);
-      if (existingPoint) {
-        alert('Este número ya está en la recta numérica');
-        return;
-      }
-
-      const classification = classifyNumber(value, input);
-
-      points.push({
-        value: value,
-        originalInput: input,
-        classification: classification
-      });
-
-      updateDisplay();
-
-      console.log(`Número predefinido agregado: ${input} = ${value} (${classification})`);
+      const inputElem = document.getElementById('numberInput');
+      inputElem.value = input;
+      addNumber();
     }
 
     function clearAll() {
-      points = [];
-      updateDisplay();
-      console.log('Todos los puntos eliminados');
+      if (points.length === 0) {
+        showToast('No hay puntos para eliminar', 'info');
+        return;
+      }
+      
+      if (confirm('¿Estás seguro de que quieres eliminar todos los puntos?')) {
+        points = [];
+        updateDisplay();
+        showToast('Todos los puntos han sido eliminados', 'success');
+      }
     }
+
+    function showExamples() {
+      const examples = [
+        "sqrt(2)",
+        "π",
+        "1/3",
+        "2*π",
+        "e",
+        "φ",
+        "-√2",
+        "3.1416",
+        "√5",
+        "e^2"
+      ];
+      
+      const exampleText = examples.join(', ');
+      showToast(`Ejemplos: ${exampleText}`, 'info', 5000);
+    }
+
+    // ==================== ZOOM ====================
+    function zoomIn() {
+      if (currentRange > 2) {
+        currentRange -= 2;
+        updateDisplay();
+        document.getElementById('rangeValue').textContent = currentRange;
+      }
+    }
+
+    function zoomOut() {
+      if (currentRange < 20) {
+        currentRange += 2;
+        updateDisplay();
+        document.getElementById('rangeValue').textContent = currentRange;
+      }
+    }
+
+    // ==================== VISUALIZACIÓN ====================
+    function drawNumberLine() {
+      const container = document.getElementById('numberLine');
+      container.innerHTML = '';
+      
+      // Línea base
+      const line = document.createElement('div');
+      line.className = 'line';
+      container.appendChild(line);
+      
+      // Marcas y etiquetas
+      const tickSpacing = currentRange <= 10 ? 1 : currentRange <= 20 ? 2 : 5;
+      const totalTicks = (currentRange * 2) / tickSpacing;
+      
+      for (let i = 0; i <= totalTicks; i++) {
+        const value = -currentRange + (i * tickSpacing);
+        const percentage = (i / totalTicks) * 90 + 5;
+        
+        const tick = document.createElement('div');
+        tick.className = 'tick';
+        tick.style.left = `${percentage}%`;
+        container.appendChild(tick);
+        
+        const label = document.createElement('div');
+        label.className = value === 0 ? 'tick-label main' : 'tick-label';
+        label.style.left = `${percentage}%`;
+        label.textContent = value;
+        container.appendChild(label);
+      }
+      
+      // Puntos
+      points.forEach((point, index) => {
+        const percentage = ((point.value + currentRange) / (2 * currentRange)) * 90 + 5;
+        
+        const pointElem = document.createElement('div');
+        pointElem.className = `number-point ${point.classification}`;
+        pointElem.style.left = `${percentage}%`;
+        pointElem.dataset.index = index;
+        
+        const pointLabel = document.createElement('div');
+        pointLabel.className = 'point-label';
+        pointLabel.textContent = `${point.originalInput} ≈ ${point.value.toFixed(3)}`;
+        pointElem.appendChild(pointLabel);
+        
+        const valueSpan = document.createElement('span');
+        valueSpan.className = 'point-value';
+        valueSpan.textContent = point.value.toFixed(2);
+        pointElem.appendChild(valueSpan);
+        
+        pointElem.onclick = (e) => {
+          e.stopPropagation();
+          removePoint(index);
+        };
+        
+        container.appendChild(pointElem);
+      });
+    }
+
+    function removePoint(index) {
+      const point = points[index];
+      if (confirm(`¿Eliminar ${point.originalInput}?`)) {
+        points.splice(index, 1);
+        updateDisplay();
+        showToast(`Punto ${point.originalInput} eliminado`, 'success');
+      }
+    }
+
+    function updatePointsList() {
+      const container = document.getElementById('pointsList');
+      
+      if (points.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div>📝</div>
+            <p>Agrega números para ver su clasificación</p>
+            <small class="text-muted">Los puntos se ordenan automáticamente</small>
+          </div>
+        `;
+        return;
+      }
+      
+      const sortedPoints = [...points].sort((a, b) => a.value - b.value);
+      
+      container.innerHTML = sortedPoints.map((point, index) => `
+        <div class="point-item ${point.classification} slide-in" style="animation-delay: ${index * 50}ms">
+          <div>
+            <strong>${point.originalInput}</strong>
+            <div class="text-muted" style="font-size: 0.9rem; margin-top: 2px;">
+              ≈ ${point.value.toFixed(6)}
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: 600; color: var(--${point.classification === 'naturals' ? 'accent-1' : point.classification === 'integers' ? 'accent-2' : point.classification === 'rationals' ? 'accent-3' : 'accent-4'})">
+              ${point.classification === 'naturals' ? 'ℕ' : point.classification === 'integers' ? 'ℤ' : point.classification === 'rationals' ? 'ℚ' : 'ℝ-ℚ'}
+            </div>
+            <div class="text-muted" style="font-size: 0.85rem; margin-top: 2px;">
+              ${point.value > 0 ? '+' : ''}${point.value.toFixed(3)}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateDistanceSelectors() {
+      const updateSelector = (selector) => {
+        const selected = document.getElementById(`${selector}-selected`);
+        const items = document.getElementById(`${selector}-items`);
+        const container = document.getElementById(`${selector}-container`);
+        
+        items.innerHTML = '<div data-value="">Selecciona un punto</div>';
+        
+        if (points.length === 0) {
+          selected.textContent = 'Selecciona un punto';
+          container.dataset.value = '';
+          return;
+        }
+        
+        points.forEach((point, index) => {
+          const option = document.createElement('div');
+          option.dataset.value = index;
+          option.textContent = `${point.originalInput} (${point.value.toFixed(3)})`;
+          option.onclick = () => {
+            selected.textContent = option.textContent;
+            container.dataset.value = index;
+            items.classList.remove('show');
+          };
+          items.appendChild(option);
+        });
+      };
+      
+      updateSelector('pointA');
+      updateSelector('pointB');
+    }
+
+    function calculateDistance() {
+      const pointAIndex = document.getElementById('pointA-container').dataset.value;
+      const pointBIndex = document.getElementById('pointB-container').dataset.value;
+      const resultDiv = document.getElementById('distanceResult');
+      
+      if (pointAIndex === '' || pointBIndex === '') {
+        resultDiv.innerHTML = `
+          <div class="empty-state">
+            <div>⚠️</div>
+            <p>Selecciona ambos puntos</p>
+          </div>
+        `;
+        return;
+      }
+      
+      if (pointAIndex === pointBIndex) {
+        resultDiv.innerHTML = `
+          <div class="empty-state">
+            <div>⚠️</div>
+            <p>Selecciona dos puntos diferentes</p>
+          </div>
+        `;
+        return;
+      }
+      
+      const pointA = points[pointAIndex];
+      const pointB = points[pointBIndex];
+      const distance = Math.abs(pointA.value - pointB.value);
+      
+      resultDiv.innerHTML = `
+        <div class="distance-result fade-in">
+          <h4>📏 Distancia Calculada</h4>
+          <p style="margin: 15px 0; font-size: 1.1rem;">
+            d(${pointA.originalInput}, ${pointB.originalInput})
+          </p>
+          <p style="font-size: 1.4rem; color: var(--gold); margin: 10px 0;">
+            = |${pointA.value.toFixed(3)} − ${pointB.value.toFixed(3)}|
+          </p>
+          <p style="font-size: 1.6rem; font-weight: 800; margin: 15px 0; color: var(--text);">
+            = ${distance.toFixed(6)}
+          </p>
+          <p class="text-muted" style="margin-top: 15px;">
+            La distancia es el valor absoluto de la diferencia
+          </p>
+        </div>
+      `;
+    }
+
+    // ==================== EVENT LISTENERS ====================
+    document.addEventListener('DOMContentLoaded', function() {
+      // Enter para agregar números
+      document.getElementById('numberInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') addNumber();
+      });
+      
+      // Dropdowns
+      ['pointA', 'pointB'].forEach(selector => {
+        const selected = document.getElementById(`${selector}-selected`);
+        const items = document.getElementById(`${selector}-items`);
+        
+        selected.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const isOpen = items.classList.contains('show');
+          
+          // Cerrar todos los dropdowns
+          document.querySelectorAll('.select-items').forEach(item => {
+            item.classList.remove('show');
+          });
+          
+          // Abrir este si estaba cerrado
+          if (!isOpen) {
+            items.classList.add('show');
+          }
+        });
+      });
+      
+      // Cerrar dropdowns al hacer clic fuera
+      document.addEventListener('click', function() {
+        document.querySelectorAll('.select-items').forEach(item => {
+          item.classList.remove('show');
+        });
+      });
+      
+      // Inicializar
+      updateDisplay();
+      showToast('¡Bienvenido al Visualizador de la Recta Numérica!', 'info', 2000);
+    });
 
     function updateDisplay() {
       drawNumberLine();
@@ -885,217 +1360,34 @@ button[onclick*="clearAll"], .preset-btn {
       updateDistanceSelectors();
     }
 
-    /* ==================== FUNCIONES DE VISUALIZACIÓN ===================== */
-    function drawNumberLine() {
-      const numberLine = document.getElementById('numberLine');
-      numberLine.innerHTML = '';
-
-      // Crear la línea base
-      const line = document.createElement('div');
-      line.className = 'line';
-      numberLine.appendChild(line);
-
-      // Crear marcas de graduación
-      const tickCount = currentRange * 2 + 1; // De -range a +range
-      for (let i = 0; i < tickCount; i++) {
-        const value = -currentRange + i;
-        const percentage = (i / (tickCount - 1)) * 90 + 5; // 5% de margen a cada lado
-
-        const tick = document.createElement('div');
-        tick.className = 'tick';
-        tick.style.left = percentage + '%';
-        numberLine.appendChild(tick);
-
-        const label = document.createElement('div');
-        label.className = 'tick-label';
-        label.style.left = percentage + '%';
-        label.textContent = value;
-        numberLine.appendChild(label);
-      }
-
-      // Agregar los puntos de números agregados
-      points.forEach((point, index) => {
-        const percentage = ((point.value + currentRange) / (2 * currentRange)) * 90 + 5;
-
-        const pointElement = document.createElement('div');
-        pointElement.className = `number-point ${point.classification}`;
-        pointElement.style.left = percentage + '%';
-        pointElement.draggable = false;
-
-        const pointLabel = document.createElement('div');
-        pointLabel.className = 'point-label';
-        pointLabel.textContent = `${point.originalInput} ≈ ${point.value.toFixed(3)}`;
-        pointElement.appendChild(pointLabel);
-
-        pointElement.onclick = () => removePoint(index);
-        pointElement.title = `${point.originalInput} (${getClassificationName(point.classification)})\nHaz clic para eliminar`;
-
-        numberLine.appendChild(pointElement);
-      });
-    }
-
-    function removePoint(index) {
-      if (confirm('¿Deseas eliminar este punto?')) {
-        const removedPoint = points.splice(index, 1)[0];
+    // Ejemplos iniciales
+    setTimeout(() => {
+      if (points.length === 0) {
+        // Agregar algunos ejemplos iniciales
+        ['π', '√2', '1/3', '-2'].forEach(num => {
+          const value = parseNumber(num);
+          if (value !== null && Math.abs(value) <= currentRange) {
+            points.push({
+              value: value,
+              originalInput: num,
+              classification: classifyNumber(value, num),
+              id: Date.now() + Math.random()
+            });
+          }
+        });
         updateDisplay();
-        console.log(`Punto eliminado: ${removedPoint.originalInput}`);
       }
-    }
-
-    function updatePointsList() {
-      const pointsList = document.getElementById('pointsList');
-
-      if (points.length === 0) {
-        pointsList.innerHTML = `
-          <div class="empty-state">
-            <p>Agrega números para ver su clasificación automática aquí</p>
-            <small>Los puntos aparecerán ordenados de menor a mayor</small>
-          </div>
-        `;
-        return;
-      }
-
-      const sortedPoints = [...points].sort((a, b) => a.value - b.value);
-
-      pointsList.innerHTML = sortedPoints.map(point => `
-        <div class="point-item" style="border-left: 4px solid ${getClassificationColor(point.classification)}">
-          <div>
-            <strong>${point.originalInput}</strong> ≈ ${point.value.toFixed(6)}<br>
-            <small>${getClassificationName(point.classification)}</small>
-          </div>
-          <div style="text-align: right;">
-            <small>Posición: ${point.value.toFixed(3)}</small>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    /* ==================== CALCULADORA DE DISTANCIAS Y SELECTS ===================== */
-    function updateDistanceSelectors() {
-      const pointAItems = document.getElementById('pointA-items');
-      const pointBItems = document.getElementById('pointB-items');
-      const pointASelected = document.getElementById('pointA-selected');
-      const pointBSelected = document.getElementById('pointB-selected');
-
-      // Limpiar las opciones existentes
-      pointAItems.innerHTML = '<div data-value="">Selecciona un punto</div>';
-      pointBItems.innerHTML = '<div data-value="">Selecciona un punto</div>';
-
-      // Resetear el texto seleccionado si no hay puntos
-      if (points.length === 0) {
-        pointASelected.textContent = 'Selecciona un punto';
-        pointBSelected.textContent = 'Selecciona un punto';
-
-        document.getElementById('pointA-container').setAttribute('data-value', '');
-        document.getElementById('pointB-container').setAttribute('data-value', '');
-        return;
-      }
-
-      points.forEach((point, index) => {
-        const optionText = `${point.originalInput} (${point.value.toFixed(3)})`;
-
-        // Crear opción para el selector A
-        const optionA = document.createElement('div');
-        optionA.setAttribute('data-value', index);
-        optionA.textContent = optionText;
-        optionA.onclick = () => selectPoint('A', index, optionText);
-        pointAItems.appendChild(optionA);
-
-        // Crear opción para el selector B
-        const optionB = document.createElement('div');
-        optionB.setAttribute('data-value', index);
-        optionB.textContent = optionText;
-        optionB.onclick = () => selectPoint('B', index, optionText);
-        pointBItems.appendChild(optionB);
-      });
-    }
-
-    function selectPoint(selector, index, text) {
-      document.getElementById(`point${selector}-selected`).textContent = text;
-      document.getElementById(`point${selector}-container`).setAttribute('data-value', index);
-      document.getElementById(`point${selector}-items`).classList.remove('show');
-    }
-
-    function calculateDistance() {
-      const pointAValue = document.getElementById('pointA-container').getAttribute('data-value');
-      const pointBValue = document.getElementById('pointB-container').getAttribute('data-value');
-      const resultDiv = document.getElementById('distanceResult');
-
-      if (!pointAValue || !pointBValue) {
-        resultDiv.innerHTML = '<div style="color: #dc3545; text-align: center; padding: 15px;">Selecciona ambos puntos para calcular la distancia</div>';
-        return;
-      }
-
-      if (pointAValue === pointBValue) {
-        resultDiv.innerHTML = '<div style="color: #dc3545; text-align: center; padding: 15px;">Selecciona dos puntos diferentes</div>';
-        return;
-      }
-
-      const pointA = points[parseInt(pointAValue)];
-      const pointB = points[parseInt(pointBValue)];
-
-      const distance = Math.abs(pointA.value - pointB.value);
-
-      resultDiv.innerHTML = `
-        <div class="distance-result">
-          <strong>Distancia entre ${pointA.originalInput} y ${pointB.originalInput}:</strong><br>
-          <strong>d(a,b) = |${pointA.value.toFixed(3)} - ${pointB.value.toFixed(3)}| = ${distance.toFixed(6)} unidades</strong>
-        </div>
-      `;
-
-      console.log(`Distancia calculada: |${pointA.value} - ${pointB.value}| = ${distance}`);
-    }
-
-    /* ==================== EVENT LISTENERS Y INICIALIZACIÓN ===================== */
-    // Event listener para detectar Enter en el input de números
-    document.addEventListener('DOMContentLoaded', function () {
-      const numberInput = document.getElementById('numberInput');
-      numberInput.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-          addNumber();
-        }
-      });
-
-      // Event listeners para manejar los dropdowns personalizados
-      document.getElementById('pointA-selected').onclick = function (e) {
-        e.stopPropagation();
-        const items = document.getElementById('pointA-items');
-        const isOpen = items.classList.contains('show');
-
-        // Cerrar todos los dropdowns primero
-        document.querySelectorAll('.select-items').forEach(item => { item.classList.remove('show'); });
-
-        // Alternar
-        if (!isOpen) {
-          items.classList.add('show');
-        }
-      };
-
-      document.getElementById('pointB-selected').onclick = function (e) {
-        e.stopPropagation();
-        const items = document.getElementById('pointB-items');
-        const isOpen = items.classList.contains('show');
-
-        // Cerrar todos los dropdowns primero
-        document.querySelectorAll('.select-items').forEach(item => { item.classList.remove('show'); });
-
-        // Alternar
-        if (!isOpen) {
-          items.classList.add('show');
-        }
-      };
-
-      // Cerrar dropdowns al hacer clic fuera de ellos
-      document.addEventListener('click', function (e) {
-        if (!e.target.closest('.custom-select')) {
-          document.querySelectorAll('.select-items').forEach(item => { item.classList.remove('show'); });
-        }
-      });
-
-      // Inicializar la aplicación
-      console.log('Aplicación inicializada correctamente');
-      updateDisplay();
-    });
+    }, 1000);
   </script>
+  <!-- Botón flotante de regreso -->
+<div style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+  <a href="/index.html" 
+     style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; 
+            background: linear-gradient(180deg, var(--gold-bright), var(--gold)); 
+            color: #0b0b0b; border-radius: 10px; text-decoration: none; font-weight: 600;
+            box-shadow: 0 8px 20px rgba(201,168,106,0.12); transition: all var(--transition);">
+    <span>←</span> Volver
+  </a>
+</div>
 </body>
 </html>
